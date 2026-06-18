@@ -1,65 +1,143 @@
-import Image from "next/image";
+import Link from 'next/link'
+import Image from 'next/image'
+import { ChevronRight, Shuffle } from 'lucide-react'
+import { getAllCategories, getRandomMeals, COURSE_CATEGORY_MAP } from '@/lib/api'
+import { RecipeGrid } from '@/components/recipe/RecipeGrid'
+import { SearchBar } from '@/components/search/SearchBar'
 
-export default function Home() {
+const COURSE_SECTIONS = [
+  {
+    key: 'starter',
+    title: 'Starters',
+    titleZh: '前菜',
+    emoji: '🥗',
+    description: 'Light bites to begin your meal',
+    href: '/category/Starter',
+    bgColor: 'bg-lime-50',
+    borderColor: 'border-lime-200',
+    badgeColor: 'bg-lime-100 text-lime-800',
+  },
+  {
+    key: 'soup',
+    title: 'Soups',
+    titleZh: '湯品',
+    emoji: '🍲',
+    description: 'Warm and comforting soups',
+    href: '/category/Soup',
+    bgColor: 'bg-orange-50',
+    borderColor: 'border-orange-200',
+    badgeColor: 'bg-orange-100 text-orange-800',
+  },
+  {
+    key: 'main',
+    title: 'Mains',
+    titleZh: '主菜',
+    emoji: '🍽️',
+    description: 'Hearty dishes from around the world',
+    href: '/category/Beef',
+    bgColor: 'bg-green-50',
+    borderColor: 'border-green-200',
+    badgeColor: 'bg-green-100 text-green-800',
+  },
+  {
+    key: 'dessert',
+    title: 'Desserts',
+    titleZh: '甜品',
+    emoji: '🍰',
+    description: 'Sweet endings to every meal',
+    href: '/category/Dessert',
+    bgColor: 'bg-pink-50',
+    borderColor: 'border-pink-200',
+    badgeColor: 'bg-pink-100 text-pink-800',
+  },
+]
+
+export default async function HomePage() {
+  const [featuredMeals, categories] = await Promise.all([
+    getRandomMeals(8),
+    getAllCategories(),
+  ])
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="max-w-6xl mx-auto px-4 py-8 space-y-14">
+
+      {/* Hero */}
+      <section className="text-center py-10 space-y-5">
+        <h1 className="text-4xl sm:text-5xl font-bold text-green-900 leading-tight">
+          Explore the World&apos;s<br />
+          <span className="text-green-600">Cuisines</span>
+        </h1>
+        <p className="text-gray-500 text-lg max-w-xl mx-auto">
+          Discover thousands of recipes from every corner of the globe.
+        </p>
+        <div className="max-w-md mx-auto">
+          <SearchBar />
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </section>
+
+      {/* Course Sections */}
+      <section>
+        <h2 className="text-xl font-bold text-gray-800 mb-5">Browse by Course</h2>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          {COURSE_SECTIONS.map((section) => (
+            <Link
+              key={section.key}
+              href={section.href}
+              className={`flex flex-col items-center gap-3 p-5 rounded-2xl border ${section.bgColor} ${section.borderColor} hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 text-center`}
+            >
+              <span className="text-4xl">{section.emoji}</span>
+              <div>
+                <p className="font-semibold text-gray-800">{section.title}</p>
+                <p className="text-xs text-gray-500 mt-0.5">{section.description}</p>
+              </div>
+              <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${section.badgeColor}`}>
+                {section.titleZh}
+              </span>
+            </Link>
+          ))}
         </div>
-      </main>
+      </section>
+
+      {/* Today's Pick */}
+      <section>
+        <div className="flex items-center justify-between mb-5">
+          <div className="flex items-center gap-2">
+            <Shuffle size={20} className="text-green-600" />
+            <h2 className="text-xl font-bold text-gray-800">Today&apos;s Picks</h2>
+          </div>
+          <span className="text-sm text-gray-400">Refreshed daily</span>
+        </div>
+        <RecipeGrid meals={featuredMeals} />
+      </section>
+
+      {/* Category chips */}
+      <section>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-bold text-gray-800">All Categories</h2>
+          <Link href="/category/Beef" className="text-sm text-green-600 hover:underline flex items-center gap-1">
+            View all <ChevronRight size={14} />
+          </Link>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {categories.map((cat) => (
+            <Link
+              key={cat.id}
+              href={`/category/${encodeURIComponent(cat.name)}`}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-green-100 hover:border-green-400 hover:bg-green-50 transition-colors text-sm text-gray-700"
+            >
+              <Image
+                src={cat.thumbnail}
+                alt={cat.name}
+                width={20}
+                height={20}
+                className="rounded-full object-cover w-5 h-5"
+              />
+              {cat.name}
+            </Link>
+          ))}
+        </div>
+      </section>
+
     </div>
-  );
+  )
 }
