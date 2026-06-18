@@ -20,9 +20,9 @@ export default async function SearchPage({ searchParams }: Props) {
   const { q } = await searchParams
   const query = q?.trim() ?? ''
 
-  const { total, meals } = query
+  const { total, meals, restIds } = query
     ? await searchMealsByNameFull(query)
-    : { total: 0, meals: [] }
+    : { total: 0, meals: [], restIds: [] as string[] }
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8 space-y-6">
@@ -43,7 +43,7 @@ export default async function SearchPage({ searchParams }: Props) {
 
       {/* Results */}
       {query ? (
-        <BrowseResults meals={meals} total={total} />
+        <BrowseResults meals={meals} total={total} restIds={restIds} />
       ) : (
         <div className="text-center py-20 text-gray-400">
           <Search size={40} className="mx-auto mb-3 opacity-30" />

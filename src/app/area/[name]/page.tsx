@@ -34,7 +34,7 @@ export default async function AreaPage({ params }: Props) {
   const { name } = await params
   const area = decodeURIComponent(name)
 
-  const [{ total, meals }, allAreas] = await Promise.all([
+  const [{ total, meals, restIds }, allAreas] = await Promise.all([
     getMealsByAreaFull(area),
     getAllAreas(),
   ])
@@ -66,7 +66,7 @@ export default async function AreaPage({ params }: Props) {
       <FilterChips chips={chips} activeLabel={activeChipLabel} title="Browse by region" />
 
       {/* Results with difficulty filter + sort */}
-      <BrowseResults meals={meals} total={total} />
+      <BrowseResults meals={meals} total={total} restIds={restIds} />
     </div>
   )
 }

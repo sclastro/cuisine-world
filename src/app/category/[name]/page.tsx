@@ -22,7 +22,7 @@ export default async function CategoryPage({ params }: Props) {
   const { name } = await params
   const category = decodeURIComponent(name)
 
-  const [{ total, meals }, allCategories] = await Promise.all([
+  const [{ total, meals, restIds }, allCategories] = await Promise.all([
     getMealsByCategoryFull(category),
     getAllCategories(),
   ])
@@ -49,7 +49,7 @@ export default async function CategoryPage({ params }: Props) {
       <FilterChips chips={chips} activeLabel={category} title="Browse categories" />
 
       {/* Results with difficulty filter + sort */}
-      <BrowseResults meals={meals} total={total} />
+      <BrowseResults meals={meals} total={total} restIds={restIds} />
     </div>
   )
 }

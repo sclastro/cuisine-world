@@ -26,6 +26,8 @@ const STRINGS = {
   'filter.showing':    { en: 'Showing',    zh: '顯示' },
   'filter.of':         { en: 'of',         zh: '/' },
   'filter.recipes':    { en: 'recipes',    zh: '道食譜' },
+  'filter.loadMore':   { en: 'Load more',  zh: '載入更多' },
+  'filter.loading':    { en: 'Loading…',   zh: '載入中…' },
 
   'sort.name':     { en: 'Name A–Z',      zh: '名稱 A–Z' },
   'sort.diffAsc':  { en: 'Easiest first', zh: '由易到難' },

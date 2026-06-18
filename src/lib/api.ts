@@ -71,17 +71,24 @@ export async function getMealsByArea(area: string): Promise<MealSummary[]> {
   return (data?.meals ?? []).map(toSummary)
 }
 
-// Resolves a list of summaries into full Meal objects (so cards/filters have
-// difficulty, estimates, etc.), capped at `limit` to bound request volume.
+// Resolves full Meal objects for a list of ids (so cards/filters have
+// difficulty, estimates, etc.). Used both for the initial batch and "load more".
+export async function getMealsByIdsFull(ids: string[]): Promise<Meal[]> {
+  const meals = (await Promise.all(ids.map((id) => getMealById(id)))).filter(
+    (m): m is Meal => m !== null
+  )
+  return meals
+}
+
+// Resolves the first `limit` summaries into full meals, returning the leftover
+// ids so the client can fetch further batches on demand ("load more").
 async function hydrateSummaries(
   summaries: MealSummary[],
   limit: number
-): Promise<{ total: number; meals: Meal[] }> {
-  const batch = summaries.slice(0, limit)
-  const meals = (await Promise.all(batch.map((s) => getMealById(s.id)))).filter(
-    (m): m is Meal => m !== null
-  )
-  return { total: summaries.length, meals }
+): Promise<{ total: number; meals: Meal[]; restIds: string[] }> {
+  const ids = summaries.map((s) => s.id)
+  const meals = await getMealsByIdsFull(ids.slice(0, limit))
+  return { total: summaries.length, meals, restIds: ids.slice(limit) }
 }
 
 // Full-meal variants for browse/search pages that need difficulty for filtering.
