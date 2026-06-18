@@ -1,5 +1,5 @@
 import type { RawMeal, Meal, MealSummary, Category, Area } from './types'
-import { extractIngredients, parseInstructions, calculateDifficulty } from './utils'
+import { extractIngredients, parseInstructions, calculateDifficulty, extractSnippet } from './utils'
 
 const BASE_URL = 'https://www.themealdb.com/api/json/v1/1'
 
@@ -27,6 +27,7 @@ function transformMeal(raw: RawMeal): Meal {
     category: raw.strCategory ?? '',
     area: raw.strArea ?? '',
     instructions,
+    snippet: extractSnippet(instructions),
     youtubeUrl: raw.strYoutube ?? null,
     tags: raw.strTags ? raw.strTags.split(',').map((t) => t.trim()).filter(Boolean) : [],
     sourceUrl: raw.strSource ?? null,

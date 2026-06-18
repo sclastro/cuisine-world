@@ -107,7 +107,7 @@ export default async function HomePage() {
           </div>
           <span className="text-sm text-gray-400">Refreshed daily</span>
         </div>
-        <RecipeGrid meals={featuredMeals} />
+        <RecipeGrid meals={featuredMeals} showSnippet />
       </section>
 
       {/* Category chips */}

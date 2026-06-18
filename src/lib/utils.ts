@@ -71,11 +71,17 @@ export function calculateDifficulty(
   return { stars, label: labels[stars] }
 }
 
-export function getYoutubeEmbedUrl(url: string | null): string | null {
+export function extractSnippet(instructions: string[], maxLength = 110): string {
+  const first = instructions.find((line) => line.length > 20) ?? ''
+  if (!first) return ''
+  return first.length <= maxLength ? first : first.slice(0, maxLength).trimEnd() + '…'
+}
+
+export function getYoutubeWatchUrl(url: string | null): string | null {
   if (!url) return null
   const match = url.match(/[?&]v=([^&]+)/)
   if (!match) return null
-  return `https://www.youtube.com/embed/${match[1]}`
+  return `https://www.youtube.com/watch?v=${match[1]}`
 }
 
 export function menuToShareUrl(menuId: string, baseUrl: string): string {

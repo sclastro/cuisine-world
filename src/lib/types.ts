@@ -63,6 +63,7 @@ export interface Meal {
   category: string
   area: string
   instructions: string[]
+  snippet: string
   youtubeUrl: string | null
   tags: string[]
   sourceUrl: string | null

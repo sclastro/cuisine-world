@@ -7,9 +7,10 @@ import { FavoriteButton } from '@/components/favorites/FavoriteButton'
 interface Props {
   meal: MealSummary
   difficulty?: DifficultyScore
+  snippet?: string
 }
 
-export function RecipeCard({ meal, difficulty }: Props) {
+export function RecipeCard({ meal, difficulty, snippet }: Props) {
   return (
     <Link
       href={`/recipe/${meal.id}`}
@@ -30,11 +31,18 @@ export function RecipeCard({ meal, difficulty }: Props) {
       </div>
 
       {/* Info */}
-      <div className="p-3 flex flex-col gap-1">
+      <div className="p-3 flex flex-col gap-1.5">
         <h3 className="text-sm font-semibold text-gray-800 line-clamp-2 leading-snug">
           {meal.name}
         </h3>
-        <div className="flex items-center justify-between mt-1">
+
+        {snippet && (
+          <p className="text-[11px] text-gray-400 line-clamp-2 leading-relaxed">
+            {snippet}
+          </p>
+        )}
+
+        <div className="flex items-center justify-between mt-0.5">
           <div className="flex flex-wrap gap-1">
             {meal.area && (
               <span className="text-[11px] px-2 py-0.5 rounded-full bg-green-50 text-green-700 border border-green-100">
