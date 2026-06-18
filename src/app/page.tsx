@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { ChevronRight, Shuffle } from 'lucide-react'
-import { getAllCategories, getRandomMeals, COURSE_CATEGORY_MAP } from '@/lib/api'
+import { ChevronRight, Shuffle, Globe } from 'lucide-react'
+import { getAllCategories, getRandomMeals } from '@/lib/api'
 import { RecipeGrid } from '@/components/recipe/RecipeGrid'
 import { SearchBar } from '@/components/search/SearchBar'
 
@@ -11,7 +11,7 @@ const COURSE_SECTIONS = [
     title: 'Starters',
     titleZh: '前菜',
     emoji: '🥗',
-    description: 'Light bites to begin your meal',
+    description: 'Light bites to open your appetite',
     href: '/category/Starter',
     bgColor: 'bg-lime-50',
     borderColor: 'border-lime-200',
@@ -22,7 +22,7 @@ const COURSE_SECTIONS = [
     title: 'Soups',
     titleZh: '湯品',
     emoji: '🍲',
-    description: 'Warm and comforting soups',
+    description: 'Warm, comforting bowls',
     href: '/category/Soup',
     bgColor: 'bg-orange-50',
     borderColor: 'border-orange-200',
@@ -33,7 +33,7 @@ const COURSE_SECTIONS = [
     title: 'Mains',
     titleZh: '主菜',
     emoji: '🍽️',
-    description: 'Hearty dishes from around the world',
+    description: 'Hearty dishes from the world',
     href: '/category/Beef',
     bgColor: 'bg-green-50',
     borderColor: 'border-green-200',
@@ -59,38 +59,68 @@ export default async function HomePage() {
   ])
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8 space-y-14">
+    <div className="max-w-6xl mx-auto px-4 py-10 space-y-16">
 
-      {/* Hero */}
-      <section className="text-center py-10 space-y-5">
-        <h1 className="text-4xl sm:text-5xl font-bold text-green-900 leading-tight">
+      {/* ── Hero ──────────────────────────────────────── */}
+      <section className="text-center py-10 space-y-6 animate-fade-up">
+        {/* Decorative pill */}
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-semibold tracking-wide">
+          🌍 Thousands of recipes · Free forever
+        </span>
+
+        <h1 className="text-4xl sm:text-5xl font-extrabold text-gray-900 leading-tight tracking-tight">
           Explore the World&apos;s<br />
           <span className="text-green-600">Cuisines</span>
         </h1>
-        <p className="text-gray-500 text-lg max-w-xl mx-auto">
-          Discover thousands of recipes from every corner of the globe.
+
+        <p className="text-gray-400 text-base sm:text-lg max-w-md mx-auto leading-relaxed">
+          From Thai street food to Italian classics —<br className="hidden sm:block" />
+          find your next favourite dish.
         </p>
+
         <div className="max-w-md mx-auto">
           <SearchBar />
         </div>
+
+        {/* Quick region links */}
+        <div className="chips-scroll justify-center max-w-lg mx-auto pt-1">
+          {['Thai', 'Italian', 'Japanese', 'Indian', 'Mexican', 'French'].map((area) => (
+            <Link
+              key={area}
+              href={`/area/${area}`}
+              className="shrink-0 px-3 py-1 rounded-full bg-white border border-gray-200 text-xs text-gray-500 hover:border-green-400 hover:text-green-700 transition-colors"
+            >
+              {area}
+            </Link>
+          ))}
+        </div>
       </section>
 
-      {/* Course Sections */}
-      <section>
-        <h2 className="text-xl font-bold text-gray-800 mb-5">Browse by Course</h2>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      {/* ── Browse by Course ──────────────────────────── */}
+      <section className="space-y-5">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-bold text-gray-800">Browse by Course</h2>
+          <span className="text-xs text-gray-400">4 categories</span>
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 stagger">
           {COURSE_SECTIONS.map((section) => (
             <Link
               key={section.key}
               href={section.href}
-              className={`flex flex-col items-center gap-3 p-5 rounded-2xl border ${section.bgColor} ${section.borderColor} hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 text-center`}
+              className={[
+                'group flex flex-col items-center gap-3 p-5 rounded-2xl border text-center',
+                'hover:shadow-lg hover:-translate-y-1 transition-all duration-250',
+                section.bgColor, section.borderColor,
+              ].join(' ')}
             >
-              <span className="text-4xl">{section.emoji}</span>
+              <span className="text-4xl group-hover:scale-110 transition-transform duration-200">
+                {section.emoji}
+              </span>
               <div>
-                <p className="font-semibold text-gray-800">{section.title}</p>
-                <p className="text-xs text-gray-500 mt-0.5">{section.description}</p>
+                <p className="font-bold text-gray-800 text-sm">{section.title}</p>
+                <p className="text-[11px] text-gray-400 mt-0.5 leading-relaxed">{section.description}</p>
               </div>
-              <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${section.badgeColor}`}>
+              <span className={`text-[11px] px-2.5 py-0.5 rounded-full font-semibold ${section.badgeColor}`}>
                 {section.titleZh}
               </span>
             </Link>
@@ -98,32 +128,56 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Today's Pick */}
-      <section>
-        <div className="flex items-center justify-between mb-5">
+      {/* ── Today's Picks ─────────────────────────────── */}
+      <section className="space-y-5">
+        <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Shuffle size={20} className="text-green-600" />
+            <div className="w-7 h-7 rounded-full bg-green-100 flex items-center justify-center">
+              <Shuffle size={14} className="text-green-600" />
+            </div>
             <h2 className="text-xl font-bold text-gray-800">Today&apos;s Picks</h2>
           </div>
-          <span className="text-sm text-gray-400">Refreshed daily</span>
+          <span className="text-xs text-gray-400 bg-gray-100 px-2.5 py-1 rounded-full">
+            Refreshed daily
+          </span>
         </div>
         <RecipeGrid meals={featuredMeals} showSnippet />
       </section>
 
-      {/* Category chips */}
-      <section>
-        <div className="flex items-center justify-between mb-4">
+      {/* ── Explore by Region ─────────────────────────── */}
+      <section className="rounded-2xl bg-gradient-to-br from-green-600 to-emerald-700 p-8 text-white text-center space-y-4">
+        <Globe size={32} className="mx-auto opacity-80" />
+        <div className="space-y-1">
+          <h2 className="text-xl font-bold">Explore by Region</h2>
+          <p className="text-green-100 text-sm">
+            Discover authentic dishes from over 25 cuisines worldwide
+          </p>
+        </div>
+        <Link
+          href="/area"
+          className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-white text-green-700 text-sm font-semibold hover:bg-green-50 transition-colors shadow-md"
+        >
+          Browse all regions <ChevronRight size={15} />
+        </Link>
+      </section>
+
+      {/* ── All Categories ────────────────────────────── */}
+      <section className="space-y-4">
+        <div className="flex items-center justify-between">
           <h2 className="text-xl font-bold text-gray-800">All Categories</h2>
-          <Link href="/category/Beef" className="text-sm text-green-600 hover:underline flex items-center gap-1">
+          <Link
+            href="/category/Beef"
+            className="text-sm text-green-600 hover:underline flex items-center gap-0.5"
+          >
             View all <ChevronRight size={14} />
           </Link>
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="chips-scroll">
           {categories.map((cat) => (
             <Link
               key={cat.id}
               href={`/category/${encodeURIComponent(cat.name)}`}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-green-100 hover:border-green-400 hover:bg-green-50 transition-colors text-sm text-gray-700"
+              className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-green-100 hover:border-green-400 hover:bg-green-50 transition-colors text-sm text-gray-700 shadow-sm"
             >
               <Image
                 src={cat.thumbnail}

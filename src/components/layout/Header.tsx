@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Menu, X, Heart, UtensilsCrossed } from 'lucide-react'
 import { LanguageToggle } from '@/components/ui/LanguageToggle'
 import { SearchBar } from '@/components/search/SearchBar'
@@ -20,8 +20,15 @@ const NAV_LABELS: Record<string, { en: string; zh: string }> = {
 
 export function Header() {
   const [open, setOpen] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
   const { favorites, mounted } = useFavorites()
   const { lang } = useLanguage()
+
+  useEffect(() => {
+    function onScroll() { setScrolled(window.scrollY > 8) }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
 
   const label = (key: string) =>
     lang === 'zh' ? NAV_LABELS[key].zh : NAV_LABELS[key].en
@@ -35,7 +42,10 @@ export function Header() {
   ]
 
   return (
-    <header className="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-green-100 shadow-sm">
+    <header className={cn(
+      'sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-green-100 transition-shadow duration-300',
+      scrolled ? 'shadow-md' : 'shadow-sm'
+    )}>
       <div className="max-w-6xl mx-auto px-4 h-16 flex items-center gap-4">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 shrink-0">
