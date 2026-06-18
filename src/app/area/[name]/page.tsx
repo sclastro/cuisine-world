@@ -1,7 +1,9 @@
 import { notFound } from 'next/navigation'
-import { getMealsByArea, getAllAreas } from '@/lib/api'
-import { RecipeGrid } from '@/components/recipe/RecipeGrid'
+import { getMealsByAreaFull, getAllAreas } from '@/lib/api'
+import { BrowseResults } from '@/components/filters/BrowseResults'
 import { FilterChips } from '@/components/filters/FilterChips'
+
+export const dynamic = 'force-dynamic'
 
 interface Props {
   params: Promise<{ name: string }>
@@ -32,12 +34,12 @@ export default async function AreaPage({ params }: Props) {
   const { name } = await params
   const area = decodeURIComponent(name)
 
-  const [meals, allAreas] = await Promise.all([
-    getMealsByArea(area),
+  const [{ total, meals }, allAreas] = await Promise.all([
+    getMealsByAreaFull(area),
     getAllAreas(),
   ])
 
-  if (meals.length === 0 && allAreas.length > 0) {
+  if (total === 0 && allAreas.length > 0) {
     const valid = allAreas.some((a) => a.name.toLowerCase() === area.toLowerCase())
     if (!valid) notFound()
   }
@@ -57,14 +59,14 @@ export default async function AreaPage({ params }: Props) {
         <h1 className="text-2xl font-bold text-gray-800">
           {flag} {area} Cuisine
         </h1>
-        <p className="text-sm text-gray-500">{meals.length} recipes found</p>
+        <p className="text-sm text-gray-500">{total} recipes found</p>
       </div>
 
       {/* Area filter chips */}
       <FilterChips chips={chips} activeLabel={activeChipLabel} title="Browse by region" />
 
-      {/* Results */}
-      <RecipeGrid meals={meals} emptyMessage={`No recipes found for "${area}".`} />
+      {/* Results with difficulty filter + sort */}
+      <BrowseResults meals={meals} total={total} />
     </div>
   )
 }

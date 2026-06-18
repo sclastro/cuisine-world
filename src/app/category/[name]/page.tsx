@@ -1,7 +1,9 @@
 import { notFound } from 'next/navigation'
-import { getMealsByCategory, getAllCategories } from '@/lib/api'
-import { RecipeGrid } from '@/components/recipe/RecipeGrid'
+import { getMealsByCategoryFull, getAllCategories } from '@/lib/api'
+import { BrowseResults } from '@/components/filters/BrowseResults'
 import { FilterChips } from '@/components/filters/FilterChips'
+
+export const dynamic = 'force-dynamic'
 
 interface Props {
   params: Promise<{ name: string }>
@@ -20,12 +22,12 @@ export default async function CategoryPage({ params }: Props) {
   const { name } = await params
   const category = decodeURIComponent(name)
 
-  const [meals, allCategories] = await Promise.all([
-    getMealsByCategory(category),
+  const [{ total, meals }, allCategories] = await Promise.all([
+    getMealsByCategoryFull(category),
     getAllCategories(),
   ])
 
-  if (meals.length === 0 && allCategories.length > 0) {
+  if (total === 0 && allCategories.length > 0) {
     const valid = allCategories.some((c) => c.name.toLowerCase() === category.toLowerCase())
     if (!valid) notFound()
   }
@@ -40,14 +42,14 @@ export default async function CategoryPage({ params }: Props) {
       {/* Header */}
       <div className="space-y-1">
         <h1 className="text-2xl font-bold text-gray-800">{category} Recipes</h1>
-        <p className="text-sm text-gray-500">{meals.length} recipes found</p>
+        <p className="text-sm text-gray-500">{total} recipes found</p>
       </div>
 
       {/* Category filter chips */}
       <FilterChips chips={chips} activeLabel={category} title="Browse categories" />
 
-      {/* Results */}
-      <RecipeGrid meals={meals} emptyMessage={`No recipes found for "${category}".`} />
+      {/* Results with difficulty filter + sort */}
+      <BrowseResults meals={meals} total={total} />
     </div>
   )
 }

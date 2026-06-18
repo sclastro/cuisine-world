@@ -69,6 +69,8 @@ export interface Meal {
   sourceUrl: string | null
   ingredients: Ingredient[]
   difficulty: DifficultyScore
+  estTimeMinutes: number
+  estServings: number
 }
 
 export interface MealSummary {

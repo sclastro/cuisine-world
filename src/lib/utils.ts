@@ -1,6 +1,6 @@
 import { type ClassValue, clsx } from 'clsx'
 import { twMerge } from 'tailwind-merge'
-import type { RawMeal, Ingredient, DifficultyScore } from './types'
+import type { RawMeal, Ingredient, DifficultyScore, Meal } from './types'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -75,6 +75,68 @@ export function extractSnippet(instructions: string[], maxLength = 110): string 
   const first = instructions.find((line) => line.length > 20) ?? ''
   if (!first) return ''
   return first.length <= maxLength ? first : first.slice(0, maxLength).trimEnd() + '…'
+}
+
+// Techniques that imply a long, mostly-passive cooking time.
+const LONG_COOK_TECHNIQUES = [
+  'braise', 'marinate', 'marinade', 'ferment', 'smoke', 'smoking', 'cure', 'curing',
+  'slow cook', 'slow-cook', 'roast', 'simmer', 'stew', 'overnight', 'proof', 'rise', 'rest',
+]
+
+// Derives a *deterministic* estimated cook time (minutes) and servings from a
+// recipe's data. TheMealDB provides neither, so these are honest estimates —
+// always computed the same way for the same input (SSR === client).
+export function estimateMealMeta(
+  ingredients: Ingredient[],
+  instructions: string[],
+  rawInstructions: string | null
+): { minutes: number; servings: number } {
+  const totalChars = rawInstructions?.length ?? 0
+
+  // Base time scales with how much instruction text there is.
+  let minutes = 15 + Math.round(totalChars / 40)
+  // More ingredients → more prep.
+  minutes += Math.min(ingredients.length, 20)
+  // Long, passive techniques add a chunk of time.
+  const lower = rawInstructions?.toLowerCase() ?? ''
+  if (LONG_COOK_TECHNIQUES.some((tch) => lower.includes(tch))) minutes += 40
+  // Clamp and round to the nearest 5 for an honest "~" feel.
+  minutes = Math.min(180, Math.max(10, minutes))
+  minutes = Math.round(minutes / 5) * 5
+
+  // Servings: deterministic from ingredient count.
+  const n = ingredients.length
+  const servings = n <= 5 ? 2 : n <= 10 ? 4 : 6
+
+  return { minutes, servings }
+}
+
+export type SortKey = 'name-asc' | 'diff-asc' | 'diff-desc'
+
+// Client-side filter + sort over already-fetched full meals.
+// `difficulties` is a set of star tiers (1–5); empty means "all".
+export function applyFilterSort(
+  meals: Meal[],
+  difficulties: number[],
+  sort: SortKey
+): Meal[] {
+  let list = meals
+  if (difficulties.length > 0) {
+    list = list.filter((m) => difficulties.includes(m.difficulty.stars))
+  }
+  const sorted = [...list]
+  switch (sort) {
+    case 'name-asc':
+      sorted.sort((a, b) => a.name.localeCompare(b.name))
+      break
+    case 'diff-asc':
+      sorted.sort((a, b) => a.difficulty.stars - b.difficulty.stars || a.name.localeCompare(b.name))
+      break
+    case 'diff-desc':
+      sorted.sort((a, b) => b.difficulty.stars - a.difficulty.stars || a.name.localeCompare(b.name))
+      break
+  }
+  return sorted
 }
 
 export function getYoutubeWatchUrl(url: string | null): string | null {

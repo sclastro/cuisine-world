@@ -1,7 +1,9 @@
 import { SearchBar } from '@/components/search/SearchBar'
-import { RecipeGrid } from '@/components/recipe/RecipeGrid'
-import { searchMealsByName } from '@/lib/api'
+import { BrowseResults } from '@/components/filters/BrowseResults'
+import { searchMealsByNameFull } from '@/lib/api'
 import { Search } from 'lucide-react'
+
+export const dynamic = 'force-dynamic'
 
 interface Props {
   searchParams: Promise<{ q?: string }>
@@ -18,7 +20,9 @@ export default async function SearchPage({ searchParams }: Props) {
   const { q } = await searchParams
   const query = q?.trim() ?? ''
 
-  const meals = query ? await searchMealsByName(query) : []
+  const { total, meals } = query
+    ? await searchMealsByNameFull(query)
+    : { total: 0, meals: [] }
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8 space-y-6">
@@ -30,8 +34,8 @@ export default async function SearchPage({ searchParams }: Props) {
         {query && (
           <p className="text-sm text-gray-500 flex items-center gap-1.5">
             <Search size={14} />
-            {meals.length > 0
-              ? `${meals.length} result${meals.length !== 1 ? 's' : ''} for "${query}"`
+            {total > 0
+              ? `${total} result${total !== 1 ? 's' : ''} for "${query}"`
               : `No results for "${query}"`}
           </p>
         )}
@@ -39,10 +43,7 @@ export default async function SearchPage({ searchParams }: Props) {
 
       {/* Results */}
       {query ? (
-        <RecipeGrid
-          meals={meals}
-          emptyMessage={`No recipes found for "${query}". Try a different keyword.`}
-        />
+        <BrowseResults meals={meals} total={total} />
       ) : (
         <div className="text-center py-20 text-gray-400">
           <Search size={40} className="mx-auto mb-3 opacity-30" />

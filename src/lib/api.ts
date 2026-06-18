@@ -1,5 +1,5 @@
 import type { RawMeal, Meal, MealSummary, Category, Area } from './types'
-import { extractIngredients, parseInstructions, calculateDifficulty, extractSnippet } from './utils'
+import { extractIngredients, parseInstructions, calculateDifficulty, extractSnippet, estimateMealMeta } from './utils'
 
 const BASE_URL = 'https://www.themealdb.com/api/json/v1/1'
 
@@ -19,6 +19,7 @@ function transformMeal(raw: RawMeal): Meal {
   const ingredients = extractIngredients(raw)
   const instructions = parseInstructions(raw.strInstructions)
   const difficulty = calculateDifficulty(ingredients, instructions, raw.strInstructions)
+  const est = estimateMealMeta(ingredients, instructions, raw.strInstructions)
 
   return {
     id: raw.idMeal,
@@ -33,6 +34,8 @@ function transformMeal(raw: RawMeal): Meal {
     sourceUrl: raw.strSource ?? null,
     ingredients,
     difficulty,
+    estTimeMinutes: est.minutes,
+    estServings: est.servings,
   }
 }
 
@@ -66,6 +69,32 @@ export async function getMealsByCategory(category: string): Promise<MealSummary[
 export async function getMealsByArea(area: string): Promise<MealSummary[]> {
   const data = await apiFetch<{ meals: RawMeal[] | null }>(`/filter.php?a=${encodeURIComponent(area)}`)
   return (data?.meals ?? []).map(toSummary)
+}
+
+// Resolves a list of summaries into full Meal objects (so cards/filters have
+// difficulty, estimates, etc.), capped at `limit` to bound request volume.
+async function hydrateSummaries(
+  summaries: MealSummary[],
+  limit: number
+): Promise<{ total: number; meals: Meal[] }> {
+  const batch = summaries.slice(0, limit)
+  const meals = (await Promise.all(batch.map((s) => getMealById(s.id)))).filter(
+    (m): m is Meal => m !== null
+  )
+  return { total: summaries.length, meals }
+}
+
+// Full-meal variants for browse/search pages that need difficulty for filtering.
+export async function getMealsByCategoryFull(category: string, limit = 48) {
+  return hydrateSummaries(await getMealsByCategory(category), limit)
+}
+
+export async function getMealsByAreaFull(area: string, limit = 48) {
+  return hydrateSummaries(await getMealsByArea(area), limit)
+}
+
+export async function searchMealsByNameFull(query: string, limit = 48) {
+  return hydrateSummaries(await searchMealsByName(query), limit)
 }
 
 export async function getAllCategories(): Promise<Category[]> {
