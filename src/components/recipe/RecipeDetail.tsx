@@ -4,6 +4,7 @@ import { ExternalLink, Tag, MapPin, UtensilsCrossed, PlayCircle } from 'lucide-r
 import type { Meal } from '@/lib/types'
 import { DifficultyStars } from '@/components/ui/DifficultyStars'
 import { FavoriteButton } from '@/components/favorites/FavoriteButton'
+import { AddToMenuButton } from '@/components/menu/AddToMenuButton'
 import { IngredientList } from './IngredientList'
 import { getYoutubeWatchUrl } from '@/lib/utils'
 
@@ -72,6 +73,11 @@ export function RecipeDetail({ meal }: Props) {
                 <span className="text-gray-400">/ {DIFFICULTY_LABELS[meal.difficulty.label]}</span>
               </span>
             </div>
+          </div>
+
+          {/* Action buttons */}
+          <div className="flex items-center gap-2 flex-wrap pt-1">
+            <AddToMenuButton meal={{ id: meal.id, name: meal.name, thumbnail: meal.thumbnail, category: meal.category, area: meal.area }} />
           </div>
 
           {/* Tags */}
