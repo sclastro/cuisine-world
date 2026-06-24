@@ -10,12 +10,13 @@ import { useLanguage } from '@/context/LanguageContext'
 import { cn } from '@/lib/utils'
 
 const NAV_LABELS: Record<string, { en: string; zh: string }> = {
-  starters:  { en: 'Starters',  zh: '前菜' },
-  mains:     { en: 'Mains',     zh: '主菜' },
-  desserts:  { en: 'Desserts',  zh: '甜品' },
-  regions:   { en: 'Regions',   zh: '地區' },
-  favorites: { en: 'Favorites', zh: '收藏' },
-  menu:      { en: 'My Menu',   zh: '我的菜單' },
+  starters:  { en: 'Starters',     zh: '前菜' },
+  everyday:  { en: 'Home Cooking', zh: '家常菜' },
+  mains:     { en: 'Mains',        zh: '主菜' },
+  desserts:  { en: 'Desserts',     zh: '甜品' },
+  regions:   { en: 'Regions',      zh: '地區' },
+  favorites: { en: 'Favorites',    zh: '收藏' },
+  menu:      { en: 'My Menu',      zh: '我的菜單' },
 }
 
 export function Header() {
@@ -35,6 +36,7 @@ export function Header() {
 
   const navLinks = [
     { href: '/category/Starter', label: label('starters') },
+    { href: '/everyday',         label: label('everyday') },
     { href: '/category/Beef',    label: label('mains') },
     { href: '/category/Dessert', label: label('desserts') },
     { href: '/area',             label: label('regions') },

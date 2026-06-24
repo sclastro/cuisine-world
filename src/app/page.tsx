@@ -4,6 +4,7 @@ import { ChevronRight, Shuffle, Globe } from 'lucide-react'
 import { getAllCategories, getRandomMeals } from '@/lib/api'
 import { RecipeGrid } from '@/components/recipe/RecipeGrid'
 import { SearchBar } from '@/components/search/SearchBar'
+import { EverydayCookingSection } from '@/components/layout/EverydayCookingSection'
 
 const COURSE_SECTIONS = [
   {
@@ -127,6 +128,9 @@ export default async function HomePage() {
           ))}
         </div>
       </section>
+
+      {/* ── Everyday Cooking ──────────────────────────── */}
+      <EverydayCookingSection />
 
       {/* ── Today's Picks ─────────────────────────────── */}
       <section className="space-y-5">

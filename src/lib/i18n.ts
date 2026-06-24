@@ -33,6 +33,18 @@ const STRINGS = {
   'sort.diffAsc':  { en: 'Easiest first', zh: '由易到難' },
   'sort.diffDesc': { en: 'Hardest first', zh: '由難到易' },
 
+  // Everyday / Home cooking
+  'nav.everyday':        { en: 'Home Cooking',  zh: '家常菜' },
+  'everyday.title':      { en: 'Everyday Cooking', zh: '家常煮意' },
+  'everyday.subtitle':   { en: 'Simple, approachable dishes for every day', zh: '簡單易做，天天都好味' },
+  'everyday.quick':      { en: 'Quick Meals',   zh: '快手菜' },
+  'everyday.quickDesc':  { en: 'Ready in 30 minutes or less', zh: '30分鐘內上桌' },
+  'everyday.asian':      { en: 'Asian Home',    zh: '亞洲家常' },
+  'everyday.asianDesc':  { en: 'HK, Japanese, Korean, Thai & more', zh: '港、日、韓、泰等亞洲家常' },
+  'everyday.world':      { en: 'World Kitchen', zh: '世界家常' },
+  'everyday.worldDesc':  { en: 'Western & Mediterranean everyday dishes', zh: '西式及地中海家常菜' },
+  'everyday.browse':     { en: 'Browse all →',  zh: '瀏覽全部 →' },
+
   // Difficulty labels
   'diff.easy':    { en: 'Easy',        zh: '初級' },
   'diff.medEasy': { en: 'Medium-Easy', zh: '初中級' },

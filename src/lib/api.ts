@@ -1,5 +1,6 @@
 import type { RawMeal, Meal, MealSummary, Category, Area } from './types'
 import { extractIngredients, parseInstructions, calculateDifficulty, extractSnippet, estimateMealMeta } from './utils'
+import { getSpoonacularMealById } from './spoonacular'
 
 const BASE_URL = 'https://www.themealdb.com/api/json/v1/1'
 
@@ -55,6 +56,9 @@ export async function searchMealsByName(query: string): Promise<MealSummary[]> {
 }
 
 export async function getMealById(id: string): Promise<Meal | null> {
+  if (id.startsWith('sp_')) {
+    return getSpoonacularMealById(parseInt(id.slice(3), 10))
+  }
   const data = await apiFetch<{ meals: RawMeal[] | null }>(`/lookup.php?i=${id}`)
   const raw = data?.meals?.[0]
   if (!raw) return null

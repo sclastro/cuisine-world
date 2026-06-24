@@ -71,6 +71,7 @@ export interface Meal {
   difficulty: DifficultyScore
   estTimeMinutes: number
   estServings: number
+  source?: 'spoonacular'
 }
 
 export interface MealSummary {
