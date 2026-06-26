@@ -1,21 +1,13 @@
 import Link from 'next/link'
 import { getAllAreas } from '@/lib/api'
+import { getAreaInfo } from '@/lib/areas'
 import type { Metadata } from 'next'
+
+export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
   title: 'Browse by Region — Cuisine World',
   description: 'Explore recipes from every corner of the world.',
-}
-
-const AREA_FLAGS: Record<string, string> = {
-  American: '🇺🇸', British: '🇬🇧', Canadian: '🇨🇦', Chinese: '🇨🇳',
-  Croatian: '🇭🇷', Dutch: '🇳🇱', Egyptian: '🇪🇬', Filipino: '🇵🇭',
-  French: '🇫🇷', Greek: '🇬🇷', Indian: '🇮🇳', Irish: '🇮🇪',
-  Italian: '🇮🇹', Jamaican: '🇯🇲', Japanese: '🇯🇵', Kenyan: '🇰🇪',
-  Malaysian: '🇲🇾', Mexican: '🇲🇽', Moroccan: '🇲🇦', Norwegian: '🇳🇴',
-  Polish: '🇵🇱', Portuguese: '🇵🇹', Russian: '🇷🇺', Spanish: '🇪🇸',
-  Thai: '🇹🇭', Tunisian: '🇹🇳', Turkish: '🇹🇷', Ukrainian: '🇺🇦',
-  Vietnamese: '🇻🇳',
 }
 
 export default async function AreaIndexPage() {
@@ -37,7 +29,7 @@ export default async function AreaIndexPage() {
             href={`/area/${encodeURIComponent(area.name)}`}
             className="flex items-center gap-3 p-4 rounded-xl bg-white border border-green-100 hover:border-green-400 hover:bg-green-50 hover:shadow-sm transition-all"
           >
-            <span className="text-2xl">{AREA_FLAGS[area.name] ?? '🌍'}</span>
+            <span className="text-2xl">{getAreaInfo(area.name).flag}</span>
             <span className="text-sm font-medium text-gray-700">{area.name}</span>
           </Link>
         ))}

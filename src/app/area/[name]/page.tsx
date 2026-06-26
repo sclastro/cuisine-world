@@ -1,7 +1,9 @@
 import { notFound } from 'next/navigation'
-import { getMealsByAreaFull, getAllAreas } from '@/lib/api'
+import { getAreaMealsCombined, getAllAreas } from '@/lib/api'
+import { getAreaInfo, AREA_INFO } from '@/lib/areas'
 import { BrowseResults } from '@/components/filters/BrowseResults'
 import { FilterChips } from '@/components/filters/FilterChips'
+import { AreaIntro } from '@/components/recipe/AreaIntro'
 
 export const dynamic = 'force-dynamic'
 
@@ -12,22 +14,11 @@ interface Props {
 export async function generateMetadata({ params }: Props) {
   const { name } = await params
   const area = decodeURIComponent(name)
+  const info = getAreaInfo(area)
   return {
     title: `${area} Cuisine — Cuisine World`,
-    description: `Explore traditional ${area} recipes and dishes.`,
+    description: info.introEn,
   }
-}
-
-// Map area names to flag emojis for display
-const AREA_FLAGS: Record<string, string> = {
-  American: '🇺🇸', British: '🇬🇧', Canadian: '🇨🇦', Chinese: '🇨🇳',
-  Croatian: '🇭🇷', Dutch: '🇳🇱', Egyptian: '🇪🇬', Filipino: '🇵🇭',
-  French: '🇫🇷', Greek: '🇬🇷', Indian: '🇮🇳', Irish: '🇮🇪',
-  Italian: '🇮🇹', Jamaican: '🇯🇲', Japanese: '🇯🇵', Kenyan: '🇰🇪',
-  Malaysian: '🇲🇾', Mexican: '🇲🇽', Moroccan: '🇲🇦', Norwegian: '🇳🇴',
-  Polish: '🇵🇱', Portuguese: '🇵🇹', Russian: '🇷🇺', Spanish: '🇪🇸',
-  Thai: '🇹🇭', Tunisian: '🇹🇳', Turkish: '🇹🇷', Ukrainian: '🇺🇦',
-  Vietnamese: '🇻🇳',
 }
 
 export default async function AreaPage({ params }: Props) {
@@ -35,37 +26,38 @@ export default async function AreaPage({ params }: Props) {
   const area = decodeURIComponent(name)
 
   const [{ total, meals, restIds }, allAreas] = await Promise.all([
-    getMealsByAreaFull(area),
+    getAreaMealsCombined(area),
     getAllAreas(),
   ])
 
-  if (total === 0 && allAreas.length > 0) {
-    const valid = allAreas.some((a) => a.name.toLowerCase() === area.toLowerCase())
-    if (!valid) notFound()
-  }
+  // 404 only if the area isn't a known region AND has no recipes from either source.
+  const known = area in AREA_INFO || allAreas.some((a) => a.name.toLowerCase() === area.toLowerCase())
+  if (total === 0 && !known) notFound()
 
-  const chips = allAreas.map((a) => ({
-    label: `${AREA_FLAGS[a.name] ?? '🌍'} ${a.name}`,
-    href: `/area/${encodeURIComponent(a.name)}`,
-  }))
+  const info = getAreaInfo(area)
 
-  const activeChipLabel = `${AREA_FLAGS[area] ?? '🌍'} ${area}`
-  const flag = AREA_FLAGS[area] ?? '🌍'
+  const chips = allAreas.map((a) => {
+    const ai = getAreaInfo(a.name)
+    return { label: `${ai.flag} ${a.name}`, href: `/area/${encodeURIComponent(a.name)}` }
+  })
+  const activeChipLabel = `${info.flag} ${area}`
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8 space-y-6">
-      {/* Header */}
-      <div className="space-y-1">
-        <h1 className="text-2xl font-bold text-gray-800">
-          {flag} {area} Cuisine
-        </h1>
-        <p className="text-sm text-gray-500">{total} recipes found</p>
-      </div>
+      {/* Bilingual header + hand-written intro */}
+      <AreaIntro
+        flag={info.flag}
+        area={area}
+        nameZh={info.nameZh}
+        introEn={info.introEn}
+        introZh={info.introZh}
+        recipeCount={total}
+      />
 
       {/* Area filter chips */}
       <FilterChips chips={chips} activeLabel={activeChipLabel} title="Browse by region" />
 
-      {/* Results with difficulty filter + sort */}
+      {/* Results with difficulty filter + sort (TheMealDB + Spoonacular merged) */}
       <BrowseResults meals={meals} total={total} restIds={restIds} />
     </div>
   )

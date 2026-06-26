@@ -195,3 +195,27 @@ export async function searchEverydayRecipes(
   const meals = data.results.map((r) => transformRecipe(r, null))
   return { total: data.totalResults, meals }
 }
+
+// Search Spoonacular by a single cuisine param (e.g. 'korean', 'thai').
+// Used by the region pages to merge home-cooking recipes alongside TheMealDB.
+// Returns full Meal objects without YouTube (saves quota on browse pages).
+export async function searchSpoonacularByCuisine(
+  cuisine: string,
+  number = 24
+): Promise<{ total: number; meals: Meal[] }> {
+  const data = await spFetch<ComplexSearchResponse>(
+    '/recipes/complexSearch',
+    {
+      cuisine,
+      addRecipeInformation: 'true',
+      fillIngredients: 'true',
+      number: String(number),
+      sort: 'popularity',
+    }
+  )
+
+  if (!data) return { total: 0, meals: [] }
+
+  const meals = data.results.map((r) => transformRecipe(r, null))
+  return { total: data.totalResults, meals }
+}

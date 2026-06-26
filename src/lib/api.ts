@@ -1,6 +1,7 @@
 import type { RawMeal, Meal, MealSummary, Category, Area } from './types'
 import { extractIngredients, parseInstructions, calculateDifficulty, extractSnippet, estimateMealMeta } from './utils'
-import { getSpoonacularMealById } from './spoonacular'
+import { getSpoonacularMealById, searchSpoonacularByCuisine } from './spoonacular'
+import { SPOONACULAR_ONLY_AREAS, spoonacularCuisineFor } from './areas'
 
 const BASE_URL = 'https://www.themealdb.com/api/json/v1/1'
 
@@ -122,7 +123,34 @@ export async function getAllCategories(): Promise<Category[]> {
 
 export async function getAllAreas(): Promise<Area[]> {
   const data = await apiFetch<{ meals: { strArea: string }[] }>('/list.php?a=list')
-  return (data?.meals ?? []).map((m) => ({ name: m.strArea }))
+  const fromDb = (data?.meals ?? []).map((m) => m.strArea)
+  // Merge in regions that only Spoonacular covers (e.g. Korean) so every
+  // cuisine in the UI is browsable, then de-duplicate and sort alphabetically.
+  const merged = Array.from(new Set([...fromDb, ...SPOONACULAR_ONLY_AREAS]))
+  merged.sort((a, b) => a.localeCompare(b))
+  return merged.map((name) => ({ name }))
+}
+
+// Fetches recipes for a region from BOTH sources and merges them, so a region
+// page shows TheMealDB's traditional dishes together with Spoonacular's
+// home-cooking recipes. Spoonacular results are loaded up front (all shown);
+// TheMealDB's remainder is paged via restIds ("load more").
+export async function getAreaMealsCombined(
+  area: string,
+  limit = 48
+): Promise<{ total: number; meals: Meal[]; restIds: string[] }> {
+  const cuisine = spoonacularCuisineFor(area)
+  const [dbResult, spoon] = await Promise.all([
+    getMealsByAreaFull(area, limit),
+    cuisine
+      ? searchSpoonacularByCuisine(cuisine)
+      : Promise.resolve({ total: 0, meals: [] as Meal[] }),
+  ])
+
+  // Spoonacular home-cooking first, then TheMealDB's traditional dishes.
+  const meals = [...spoon.meals, ...dbResult.meals]
+  const total = dbResult.total + spoon.meals.length
+  return { total, meals, restIds: dbResult.restIds }
 }
 
 export async function getRandomMeal(): Promise<Meal | null> {
