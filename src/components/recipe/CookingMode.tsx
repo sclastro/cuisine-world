@@ -3,11 +3,14 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { ChefHat, X, ChevronLeft, ChevronRight } from 'lucide-react'
 import { useT } from '@/hooks/useT'
-import { useTranslation, useTranslations } from '@/hooks/useTranslation'
+import { useLanguage } from '@/context/LanguageContext'
 
 interface Props {
   steps: string[]
   title: string
+  // Server-translated Chinese, chosen instantly by the language toggle.
+  stepsZh?: string[]
+  titleZh?: string
 }
 
 // Minimal Wake Lock typing (not yet in the standard lib DOM types).
@@ -18,13 +21,14 @@ interface WakeLockNavigator {
   wakeLock?: { request: (type: 'screen') => Promise<WakeLockSentinel> }
 }
 
-export function CookingMode({ steps, title }: Props) {
+export function CookingMode({ steps, title, stepsZh, titleZh }: Props) {
   const t = useT()
+  const { lang } = useLanguage()
   const [open, setOpen] = useState(false)
   const [i, setI] = useState(0)
 
-  const translatedSteps = useTranslations(steps)
-  const translatedTitle = useTranslation(title)
+  const translatedSteps = lang === 'zh' && stepsZh?.length === steps.length ? stepsZh : steps
+  const translatedTitle = lang === 'zh' && titleZh ? titleZh : title
   const wakeRef = useRef<WakeLockSentinel | null>(null)
 
   const total = translatedSteps.length

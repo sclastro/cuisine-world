@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation'
-import { searchEverydayRecipes } from '@/lib/spoonacular'
+import { getEverydayMeals } from '@/lib/api'
+import { localizeMealsForList } from '@/lib/localize'
 import { BrowseResults } from '@/components/filters/BrowseResults'
 
 export const dynamic = 'force-dynamic'
@@ -41,7 +42,9 @@ export default async function EverydayTypePage({ params }: Props) {
   const meta = META[type]
   if (!meta) notFound()
 
-  const { total, meals } = await searchEverydayRecipes(type as 'quick' | 'asian' | 'world')
+  const raw = await getEverydayMeals(type as 'quick' | 'asian' | 'world')
+  const meals = await localizeMealsForList(raw.meals)
+  const { total, restIds } = raw
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8 space-y-6">
@@ -77,7 +80,7 @@ export default async function EverydayTypePage({ params }: Props) {
         ))}
       </div>
 
-      <BrowseResults meals={meals} total={total} />
+      <BrowseResults meals={meals} total={total} restIds={restIds} />
     </div>
   )
 }

@@ -1,6 +1,8 @@
 import { notFound } from 'next/navigation'
 import { Suspense } from 'react'
 import { getMealById } from '@/lib/api'
+import { localizeMealFull } from '@/lib/localize'
+import { searchCookingVideo } from '@/lib/youtube'
 import { RecipeDetail } from '@/components/recipe/RecipeDetail'
 import { SimilarRecipes } from '@/components/recipe/SimilarRecipes'
 import { SkeletonGrid } from '@/components/ui/SkeletonCard'
@@ -24,9 +26,21 @@ export async function generateMetadata({ params }: Props) {
 
 export default async function RecipePage({ params }: Props) {
   const { id } = await params
-  const meal = await getMealById(id)
+  let rawMeal = await getMealById(id)
 
-  if (!meal) notFound()
+  if (!rawMeal) notFound()
+
+  // Ensure a cooking video is offered even when the source recipe has none
+  // (e.g. TheMealDB entries without strYoutube). Only runs on the detail view,
+  // so browse pages never spend YouTube quota. No-ops without a YouTube key.
+  if (!rawMeal.youtubeUrl) {
+    const videoId = await searchCookingVideo(rawMeal.name)
+    if (videoId) {
+      rawMeal = { ...rawMeal, youtubeUrl: `https://www.youtube.com/watch?v=${videoId}` }
+    }
+  }
+
+  const meal = await localizeMealFull(rawMeal)
 
   return (
     <>

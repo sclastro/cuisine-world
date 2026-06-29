@@ -1,6 +1,6 @@
 import type { RawMeal, Meal, MealSummary, Category, Area } from './types'
 import { extractIngredients, parseInstructions, calculateDifficulty, extractSnippet, estimateMealMeta } from './utils'
-import { getSpoonacularMealById, searchSpoonacularByCuisine } from './spoonacular'
+import { getSpoonacularMealById, searchSpoonacularByCuisine, searchEverydayRecipes } from './spoonacular'
 import { SPOONACULAR_ONLY_AREAS, spoonacularCuisineFor } from './areas'
 
 const BASE_URL = 'https://www.themealdb.com/api/json/v1/1'
@@ -96,12 +96,18 @@ async function hydrateSummaries(
   return { total: summaries.length, meals, restIds: ids.slice(limit) }
 }
 
+// How many recipes to hydrate (individual lookups) for the first render.
+// TheMealDB's free key rate-limits hard, so a big initial batch of parallel
+// lookups was timing out and leaving region/category pages empty. A small,
+// reliable first page plus on-demand "load more" is far more robust.
+export const INITIAL_BATCH = 12
+
 // Full-meal variants for browse/search pages that need difficulty for filtering.
-export async function getMealsByCategoryFull(category: string, limit = 48) {
+export async function getMealsByCategoryFull(category: string, limit = INITIAL_BATCH) {
   return hydrateSummaries(await getMealsByCategory(category), limit)
 }
 
-export async function getMealsByAreaFull(area: string, limit = 48) {
+export async function getMealsByAreaFull(area: string, limit = INITIAL_BATCH) {
   return hydrateSummaries(await getMealsByArea(area), limit)
 }
 
@@ -133,9 +139,11 @@ export async function getAllCategories(): Promise<Category[]> {
 export async function getAllAreas(): Promise<Area[]> {
   const data = await apiFetch<{ meals: { strArea: string }[] }>('/list.php?a=list')
   const fromDb = (data?.meals ?? []).map((m) => m.strArea)
-  // Merge in regions that only Spoonacular covers (e.g. Korean) so every
-  // cuisine in the UI is browsable, then de-duplicate and sort alphabetically.
-  const merged = Array.from(new Set([...fromDb, ...SPOONACULAR_ONLY_AREAS]))
+  // Only surface Spoonacular-only regions (e.g. Korean) when a Spoonacular key
+  // is configured — otherwise those pages would be empty. Without a key the
+  // region list is exactly TheMealDB's, so every listed region works.
+  const extra = process.env.SPOONACULAR_API_KEY ? SPOONACULAR_ONLY_AREAS : []
+  const merged = Array.from(new Set([...fromDb, ...extra]))
   merged.sort((a, b) => a.localeCompare(b))
   return merged.map((name) => ({ name }))
 }
@@ -146,7 +154,7 @@ export async function getAllAreas(): Promise<Area[]> {
 // TheMealDB's remainder is paged via restIds ("load more").
 export async function getAreaMealsCombined(
   area: string,
-  limit = 48
+  limit = INITIAL_BATCH
 ): Promise<{ total: number; meals: Meal[]; restIds: string[] }> {
   const cuisine = spoonacularCuisineFor(area)
   const [dbResult, spoon] = await Promise.all([
@@ -169,9 +177,33 @@ export async function getRandomMeal(): Promise<Meal | null> {
   return transformMeal(raw)
 }
 
+// Returns `count` DISTINCT random meals.
+//
+// /random.php is the same URL every time, and Next.js de-duplicates identical
+// fetches within a single render — so the old Promise.all of N identical calls
+// resolved to the SAME meal N times (the homepage showed one dish repeated).
+// We give each call a unique cache-busting query param to defeat that dedup,
+// over-fetch a little, then de-duplicate by id to guarantee variety.
 export async function getRandomMeals(count: number): Promise<Meal[]> {
-  const results = await Promise.all(Array.from({ length: count }, () => getRandomMeal()))
-  return results.filter((m): m is Meal => m !== null)
+  const attempts = count * 3
+  const results = await Promise.all(
+    Array.from({ length: attempts }, async (_, i) => {
+      const data = await apiFetch<{ meals: RawMeal[] | null }>(`/random.php?_=${i}`, 0)
+      const raw = data?.meals?.[0]
+      return raw ? transformMeal(raw) : null
+    })
+  )
+
+  const seen = new Set<string>()
+  const distinct: Meal[] = []
+  for (const meal of results) {
+    if (meal && !seen.has(meal.id)) {
+      seen.add(meal.id)
+      distinct.push(meal)
+      if (distinct.length === count) break
+    }
+  }
+  return distinct
 }
 
 export async function getMealsByIds(ids: string[]): Promise<MealSummary[]> {
@@ -187,4 +219,79 @@ export const COURSE_CATEGORY_MAP: Record<string, string[]> = {
   soup: ['Soup'],
   main: ['Beef', 'Chicken', 'Lamb', 'Pork', 'Seafood', 'Pasta', 'Vegan', 'Vegetarian', 'Goat', 'Breakfast'],
   dessert: ['Dessert'],
+}
+
+// ── Everyday / home cooking, built on TheMealDB (always free, no API key) ────
+// Each type maps to a set of reliable TheMealDB filters. Spoonacular, when a key
+// is present, is merged in as a bonus — but the page is never empty without it.
+type EverydayKind = 'quick' | 'asian' | 'world'
+
+const EVERYDAY_SOURCES: Record<
+  EverydayKind,
+  { areas?: string[]; categories?: string[]; spoonacular?: 'quick' }
+> = {
+  // Quick: lighter courses that tend to be fast; the difficulty filter + the
+  // ≤40-min estimate further narrow it to genuinely quick dishes.
+  quick: { categories: ['Breakfast', 'Side', 'Starter', 'Miscellaneous'], spoonacular: 'quick' },
+  asian: { areas: ['Chinese', 'Japanese', 'Thai', 'Malaysian', 'Vietnamese', 'Filipino'] },
+  world: { areas: ['American', 'Italian', 'French', 'Spanish', 'British', 'Greek', 'Mexican'] },
+}
+
+// Gathers a de-duplicated summary pool for an everyday type from TheMealDB.
+async function everydaySummaryPool(kind: EverydayKind): Promise<MealSummary[]> {
+  const src = EVERYDAY_SOURCES[kind]
+  const lists = await Promise.all([
+    ...(src.areas ?? []).map((a) => getMealsByArea(a)),
+    ...(src.categories ?? []).map((c) => getMealsByCategory(c)),
+  ])
+  const seen = new Set<string>()
+  const pool: MealSummary[] = []
+  for (const list of lists) {
+    for (const m of list) {
+      if (!seen.has(m.id)) {
+        seen.add(m.id)
+        pool.push(m)
+      }
+    }
+  }
+  return pool
+}
+
+// Reliable everyday recipes: hydrate a small batch from TheMealDB, optionally
+// fold in Spoonacular quick recipes (bonus, only with a key). Never empty.
+export async function getEverydayMeals(
+  kind: EverydayKind
+): Promise<{ total: number; meals: Meal[]; restIds: string[] }> {
+  const pool = await everydaySummaryPool(kind)
+  const ids = pool.map((s) => s.id)
+
+  // Hydrate a slightly larger batch for 'quick' so the ≤40-min filter still
+  // leaves a full first page.
+  const hydrateCount = kind === 'quick' ? INITIAL_BATCH + 6 : INITIAL_BATCH
+  let meals = await getMealsByIdsFull(ids.slice(0, hydrateCount))
+  let usedIds = hydrateCount
+
+  if (kind === 'quick') {
+    meals = meals.filter((m) => m.estTimeMinutes <= 40)
+  }
+
+  // Optional Spoonacular bonus (quick = ≤30 min), merged in front when available.
+  const spoon = await searchEverydayBonus(kind)
+  meals = [...spoon, ...meals]
+
+  return {
+    total: pool.length + spoon.length,
+    meals,
+    restIds: ids.slice(usedIds),
+  }
+}
+
+// Thin wrapper around Spoonacular's everyday search; returns [] without a key.
+async function searchEverydayBonus(kind: EverydayKind): Promise<Meal[]> {
+  try {
+    const { meals } = await searchEverydayRecipes(kind, 12)
+    return meals
+  } catch {
+    return []
+  }
 }

@@ -3,6 +3,7 @@ import Link from 'next/link'
 import type { MealSummary, DifficultyScore } from '@/lib/types'
 import { DifficultyStars } from '@/components/ui/DifficultyStars'
 import { FavoriteButton } from '@/components/favorites/FavoriteButton'
+import { LocalizedText } from '@/components/ui/LocalizedText'
 import { RecipeCardMeta } from './RecipeCardMeta'
 
 interface Props {
@@ -11,9 +12,17 @@ interface Props {
   snippet?: string
   minutes?: number
   servings?: number
+  // Server-provided Chinese translations (optional; falls back to English).
+  nameZh?: string
+  snippetZh?: string
+  areaZh?: string
+  categoryZh?: string
 }
 
-export function RecipeCard({ meal, difficulty, snippet, minutes, servings }: Props) {
+export function RecipeCard({
+  meal, difficulty, snippet, minutes, servings,
+  nameZh, snippetZh, areaZh, categoryZh,
+}: Props) {
   return (
     <Link
       href={`/recipe/${meal.id}`}
@@ -36,24 +45,24 @@ export function RecipeCard({ meal, difficulty, snippet, minutes, servings }: Pro
       {/* Info */}
       <div className="p-3 flex flex-col gap-1.5">
         <h3 className="text-sm font-semibold text-gray-800 line-clamp-2 leading-snug">
-          {meal.name}
+          <LocalizedText en={meal.name} zh={nameZh} />
         </h3>
 
         {snippet && (
           <p className="text-[11px] text-gray-400 line-clamp-2 leading-relaxed">
-            {snippet}
+            <LocalizedText en={snippet} zh={snippetZh} />
           </p>
         )}
 
         <div className="flex flex-wrap gap-1">
           {meal.area && (
             <span className="text-[11px] px-2 py-0.5 rounded-full bg-green-50 text-green-700 border border-green-100">
-              {meal.area}
+              <LocalizedText en={meal.area} zh={areaZh} />
             </span>
           )}
           {meal.category && (
             <span className="text-[11px] px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-100">
-              {meal.category}
+              <LocalizedText en={meal.category} zh={categoryZh} />
             </span>
           )}
         </div>

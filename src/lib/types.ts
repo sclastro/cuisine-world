@@ -72,6 +72,15 @@ export interface Meal {
   estTimeMinutes: number
   estServings: number
   source?: 'spoonacular'
+  // Chinese (zh-TW) translations, filled server-side and cached. Optional so a
+  // meal is still valid before localization; the UI falls back to English.
+  nameZh?: string
+  snippetZh?: string
+  areaZh?: string
+  categoryZh?: string
+  instructionsZh?: string[]
+  ingredientsZh?: string[] // translated ingredient names, parallel to `ingredients`
+  tagsZh?: string[]
 }
 
 export interface MealSummary {

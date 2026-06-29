@@ -1,7 +1,10 @@
 import { notFound } from 'next/navigation'
 import { getMealsByCategoryFull, getAllCategories } from '@/lib/api'
+import { localizeMealsForList } from '@/lib/localize'
+import { categoryZh } from '@/lib/categories'
 import { BrowseResults } from '@/components/filters/BrowseResults'
 import { FilterChips } from '@/components/filters/FilterChips'
+import { LocalizedText } from '@/components/ui/LocalizedText'
 
 export const dynamic = 'force-dynamic'
 
@@ -22,7 +25,7 @@ export default async function CategoryPage({ params }: Props) {
   const { name } = await params
   const category = decodeURIComponent(name)
 
-  const [{ total, meals, restIds }, allCategories] = await Promise.all([
+  const [{ total, meals: rawMeals, restIds }, allCategories] = await Promise.all([
     getMealsByCategoryFull(category),
     getAllCategories(),
   ])
@@ -31,6 +34,8 @@ export default async function CategoryPage({ params }: Props) {
     const valid = allCategories.some((c) => c.name.toLowerCase() === category.toLowerCase())
     if (!valid) notFound()
   }
+
+  const meals = await localizeMealsForList(rawMeals)
 
   const chips = allCategories.map((c) => ({
     label: c.name,
@@ -41,7 +46,9 @@ export default async function CategoryPage({ params }: Props) {
     <div className="max-w-6xl mx-auto px-4 py-8 space-y-6">
       {/* Header */}
       <div className="space-y-1">
-        <h1 className="text-2xl font-bold text-gray-800">{category} Recipes</h1>
+        <h1 className="text-2xl font-bold text-gray-800">
+          <LocalizedText en={`${category} Recipes`} zh={`${categoryZh(category)}食譜`} />
+        </h1>
         <p className="text-sm text-gray-500">{total} recipes found</p>
       </div>
 

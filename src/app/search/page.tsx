@@ -1,6 +1,7 @@
 import { SearchBar } from '@/components/search/SearchBar'
 import { BrowseResults } from '@/components/filters/BrowseResults'
 import { searchMealsByNameFull } from '@/lib/api'
+import { localizeMealsForList } from '@/lib/localize'
 import { Search } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
@@ -20,9 +21,11 @@ export default async function SearchPage({ searchParams }: Props) {
   const { q } = await searchParams
   const query = q?.trim() ?? ''
 
-  const { total, meals, restIds } = query
+  const raw = query
     ? await searchMealsByNameFull(query)
     : { total: 0, meals: [], restIds: [] as string[] }
+  const { total, restIds } = raw
+  const meals = await localizeMealsForList(raw.meals)
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8 space-y-6">

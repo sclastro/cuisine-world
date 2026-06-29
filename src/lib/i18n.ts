@@ -23,6 +23,7 @@ const STRINGS = {
   'filter.sortBy':     { en: 'Sort',       zh: '排序' },
   'filter.clear':      { en: 'Clear',      zh: '清除' },
   'filter.noneMatch':  { en: 'No recipes match these filters.', zh: '沒有符合篩選條件的食譜。' },
+  'filter.empty':      { en: 'No recipes here yet — try another section.', zh: '這裡暫時未有食譜，試下其他分類。' },
   'filter.showing':    { en: 'Showing',    zh: '顯示' },
   'filter.of':         { en: 'of',         zh: '/' },
   'filter.recipes':    { en: 'recipes',    zh: '道食譜' },

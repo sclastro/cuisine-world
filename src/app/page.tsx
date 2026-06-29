@@ -2,6 +2,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { ChevronRight, Shuffle, Globe } from 'lucide-react'
 import { getAllCategories, getRandomMeals } from '@/lib/api'
+import { localizeMealsForList } from '@/lib/localize'
 import { RecipeGrid } from '@/components/recipe/RecipeGrid'
 import { SearchBar } from '@/components/search/SearchBar'
 import { EverydayCookingSection } from '@/components/layout/EverydayCookingSection'
@@ -24,7 +25,7 @@ const COURSE_SECTIONS = [
     titleZh: '湯品',
     emoji: '🍲',
     description: 'Warm, comforting bowls',
-    href: '/category/Soup',
+    href: '/search?q=soup',
     bgColor: 'bg-orange-50',
     borderColor: 'border-orange-200',
     badgeColor: 'bg-orange-100 text-orange-800',
@@ -54,10 +55,11 @@ const COURSE_SECTIONS = [
 ]
 
 export default async function HomePage() {
-  const [featuredMeals, categories] = await Promise.all([
-    getRandomMeals(8),
+  const [randomMeals, categories] = await Promise.all([
+    getRandomMeals(3),
     getAllCategories(),
   ])
+  const featuredMeals = await localizeMealsForList(randomMeals)
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-10 space-y-16">

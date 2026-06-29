@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation'
 import { getAreaMealsCombined, getAllAreas } from '@/lib/api'
+import { localizeMealsForList } from '@/lib/localize'
 import { getAreaInfo, AREA_INFO } from '@/lib/areas'
 import { BrowseResults } from '@/components/filters/BrowseResults'
 import { FilterChips } from '@/components/filters/FilterChips'
@@ -25,7 +26,7 @@ export default async function AreaPage({ params }: Props) {
   const { name } = await params
   const area = decodeURIComponent(name)
 
-  const [{ total, meals, restIds }, allAreas] = await Promise.all([
+  const [{ total, meals: rawMeals, restIds }, allAreas] = await Promise.all([
     getAreaMealsCombined(area),
     getAllAreas(),
   ])
@@ -34,6 +35,7 @@ export default async function AreaPage({ params }: Props) {
   const known = area in AREA_INFO || allAreas.some((a) => a.name.toLowerCase() === area.toLowerCase())
   if (total === 0 && !known) notFound()
 
+  const meals = await localizeMealsForList(rawMeals)
   const info = getAreaInfo(area)
 
   const chips = allAreas.map((a) => {

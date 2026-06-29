@@ -5,10 +5,11 @@ import type { Meal } from '@/lib/types'
 import { DifficultyStars } from '@/components/ui/DifficultyStars'
 import { FavoriteButton } from '@/components/favorites/FavoriteButton'
 import { AddToMenuButton } from '@/components/menu/AddToMenuButton'
+import { LocalizedText } from '@/components/ui/LocalizedText'
 import { IngredientList } from './IngredientList'
 import { CookingMode } from './CookingMode'
 import { RecipeEstimates } from './RecipeEstimates'
-import { getYoutubeWatchUrl } from '@/lib/utils'
+import { getYoutubeWatchUrl, getYoutubeEmbedUrl } from '@/lib/utils'
 
 interface Props {
   meal: Meal
@@ -24,6 +25,7 @@ const DIFFICULTY_LABELS: Record<string, string> = {
 
 export function RecipeDetail({ meal }: Props) {
   const youtubeUrl = getYoutubeWatchUrl(meal.youtubeUrl)
+  const youtubeEmbed = getYoutubeEmbedUrl(meal.youtubeUrl)
 
   return (
     <article className="max-w-3xl mx-auto px-4 py-8 space-y-8">
@@ -45,7 +47,9 @@ export function RecipeDetail({ meal }: Props) {
         </div>
 
         <div className="space-y-3">
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">{meal.name}</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+            <LocalizedText en={meal.name} zh={meal.nameZh} />
+          </h1>
 
           {/* Meta row */}
           <div className="flex flex-wrap items-center gap-3 text-sm">
@@ -55,7 +59,7 @@ export function RecipeDetail({ meal }: Props) {
                 className="flex items-center gap-1 text-green-700 hover:underline"
               >
                 <MapPin size={14} />
-                {meal.area}
+                <LocalizedText en={meal.area} zh={meal.areaZh} />
               </Link>
             )}
             {meal.category && (
@@ -64,7 +68,7 @@ export function RecipeDetail({ meal }: Props) {
                 className="flex items-center gap-1 text-amber-700 hover:underline"
               >
                 <UtensilsCrossed size={14} />
-                {meal.category}
+                <LocalizedText en={meal.category} zh={meal.categoryZh} />
               </Link>
             )}
             <div className="flex items-center gap-1.5 text-gray-500">
@@ -82,20 +86,25 @@ export function RecipeDetail({ meal }: Props) {
 
           {/* Action buttons */}
           <div className="flex items-center gap-2 flex-wrap pt-1">
-            <CookingMode steps={meal.instructions} title={meal.name} />
+            <CookingMode
+              steps={meal.instructions}
+              title={meal.name}
+              stepsZh={meal.instructionsZh}
+              titleZh={meal.nameZh}
+            />
             <AddToMenuButton meal={{ id: meal.id, name: meal.name, thumbnail: meal.thumbnail, category: meal.category, area: meal.area }} />
           </div>
 
           {/* Tags */}
           {meal.tags.length > 0 && (
             <div className="flex flex-wrap gap-1.5">
-              {meal.tags.map((tag) => (
+              {meal.tags.map((tag, idx) => (
                 <span
                   key={tag}
                   className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-gray-100 text-gray-500 text-xs"
                 >
                   <Tag size={10} />
-                  {tag}
+                  <LocalizedText en={tag} zh={meal.tagsZh?.[idx]} />
                 </span>
               ))}
             </div>
@@ -106,57 +115,70 @@ export function RecipeDetail({ meal }: Props) {
       {/* Ingredients */}
       <section className="space-y-3">
         <h2 className="text-lg font-bold text-gray-800">
-          Ingredients
-          <span className="ml-2 text-sm font-normal text-gray-400">({meal.ingredients.length} items)</span>
+          <LocalizedText en="Ingredients" zh="食材" />
+          <span className="ml-2 text-sm font-normal text-gray-400">({meal.ingredients.length})</span>
         </h2>
-        <IngredientList ingredients={meal.ingredients} />
+        <IngredientList ingredients={meal.ingredients} namesZh={meal.ingredientsZh} />
       </section>
 
       {/* Instructions */}
       <section className="space-y-3">
-        <h2 className="text-lg font-bold text-gray-800">Instructions</h2>
+        <h2 className="text-lg font-bold text-gray-800">
+          <LocalizedText en="Instructions" zh="烹飪步驟" />
+        </h2>
         <ol className="space-y-3">
           {meal.instructions.map((step, i) => (
             <li key={i} className="flex gap-3">
               <span className="shrink-0 w-6 h-6 rounded-full bg-green-100 text-green-700 text-xs font-bold flex items-center justify-center mt-0.5">
                 {i + 1}
               </span>
-              <p className="text-gray-700 text-sm leading-relaxed">{step}</p>
+              <p className="text-gray-700 text-sm leading-relaxed">
+                <LocalizedText en={step} zh={meal.instructionsZh?.[i]} />
+              </p>
             </li>
           ))}
         </ol>
       </section>
 
-      {/* YouTube link */}
-      {youtubeUrl && (
-        <section className="rounded-xl border border-red-100 bg-red-50 p-4 flex items-start gap-3">
-          <PlayCircle size={22} className="text-red-500 shrink-0 mt-0.5" />
-          <div className="space-y-1">
-            <p className="text-sm font-semibold text-gray-800">Watch on YouTube</p>
-            <p className="text-xs text-gray-500">
-              See a video walkthrough of this recipe for extra tips and technique guidance.
-            </p>
+      {/* Watch on YouTube — embedded player + link (shown whenever a video exists) */}
+      {youtubeEmbed && (
+        <section className="space-y-2">
+          <h2 className="text-lg font-bold text-gray-800 flex items-center gap-2">
+            <PlayCircle size={20} className="text-red-500" />
+            <LocalizedText en="Watch & Cook" zh="睇片學整" />
+          </h2>
+          <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-black shadow-sm">
+            <iframe
+              src={youtubeEmbed}
+              title="Recipe video"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              className="absolute inset-0 w-full h-full"
+            />
+          </div>
+          {youtubeUrl && (
             <a
               href={youtubeUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 text-xs text-red-600 hover:underline font-medium mt-1"
+              className="inline-flex items-center gap-1 text-xs text-red-600 hover:underline font-medium"
             >
-              Open video <ExternalLink size={11} />
+              <LocalizedText en="Open on YouTube" zh="喺 YouTube 開啟" />
+              <ExternalLink size={11} />
             </a>
-          </div>
+          )}
         </section>
       )}
 
-      {/* Source link */}
+      {/* Source link — always shown when present, alongside the video */}
       {meal.sourceUrl && (
         <p className="text-xs text-gray-400">
-          Original recipe:{' '}
+          <LocalizedText en="Original recipe:" zh="原始食譜：" />{' '}
           <a
             href={meal.sourceUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-green-600 hover:underline"
+            className="text-green-600 hover:underline break-all"
           >
             {meal.sourceUrl}
           </a>

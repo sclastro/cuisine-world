@@ -1,14 +1,17 @@
 import Image from 'next/image'
 import type { Ingredient } from '@/lib/types'
+import { LocalizedText } from '@/components/ui/LocalizedText'
 
 interface Props {
   ingredients: Ingredient[]
+  // Translated ingredient names, parallel to `ingredients`.
+  namesZh?: string[]
 }
 
-export function IngredientList({ ingredients }: Props) {
+export function IngredientList({ ingredients, namesZh }: Props) {
   return (
     <ul className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-      {ingredients.map((ing) => (
+      {ingredients.map((ing, idx) => (
         <li
           key={ing.name}
           className="flex items-center gap-2 p-2 rounded-xl bg-green-50 border border-green-100"
@@ -24,7 +27,9 @@ export function IngredientList({ ingredients }: Props) {
             />
           </div>
           <div className="min-w-0">
-            <p className="text-xs font-medium text-gray-800 truncate">{ing.name}</p>
+            <p className="text-xs font-medium text-gray-800 truncate">
+              <LocalizedText en={ing.name} zh={namesZh?.[idx]} />
+            </p>
             {ing.measure && (
               <p className="text-[11px] text-gray-400 truncate">{ing.measure}</p>
             )}

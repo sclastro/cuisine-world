@@ -14,7 +14,7 @@ interface Props {
   restIds?: string[]
 }
 
-const BATCH = 48
+const BATCH = 12
 
 // Client wrapper that adds difficulty filtering + sorting over a set of full
 // meals, plus on-demand "load more" of any remaining recipes.
@@ -72,7 +72,11 @@ export function BrowseResults({ meals, total, restIds = [] }: Props) {
 
       {countLine && <p className="text-xs text-gray-400">{countLine}</p>}
 
-      <RecipeGrid meals={visible} showSnippet emptyMessage={t('filter.noneMatch')} />
+      <RecipeGrid
+        meals={visible}
+        showSnippet
+        emptyMessage={difficulties.length > 0 ? t('filter.noneMatch') : t('filter.empty')}
+      />
 
       {pendingIds.length > 0 && (
         <div className="flex justify-center pt-2">
