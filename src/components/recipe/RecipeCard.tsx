@@ -3,14 +3,17 @@ import Link from 'next/link'
 import type { MealSummary, DifficultyScore } from '@/lib/types'
 import { DifficultyStars } from '@/components/ui/DifficultyStars'
 import { FavoriteButton } from '@/components/favorites/FavoriteButton'
+import { RecipeCardMeta } from './RecipeCardMeta'
 
 interface Props {
   meal: MealSummary
   difficulty?: DifficultyScore
   snippet?: string
+  minutes?: number
+  servings?: number
 }
 
-export function RecipeCard({ meal, difficulty, snippet }: Props) {
+export function RecipeCard({ meal, difficulty, snippet, minutes, servings }: Props) {
   return (
     <Link
       href={`/recipe/${meal.id}`}
@@ -42,21 +45,30 @@ export function RecipeCard({ meal, difficulty, snippet }: Props) {
           </p>
         )}
 
-        <div className="flex items-center justify-between mt-0.5">
-          <div className="flex flex-wrap gap-1">
-            {meal.area && (
-              <span className="text-[11px] px-2 py-0.5 rounded-full bg-green-50 text-green-700 border border-green-100">
-                {meal.area}
-              </span>
-            )}
-            {meal.category && (
-              <span className="text-[11px] px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-100">
-                {meal.category}
-              </span>
-            )}
-          </div>
-          {difficulty && <DifficultyStars difficulty={difficulty} size="sm" />}
+        <div className="flex flex-wrap gap-1">
+          {meal.area && (
+            <span className="text-[11px] px-2 py-0.5 rounded-full bg-green-50 text-green-700 border border-green-100">
+              {meal.area}
+            </span>
+          )}
+          {meal.category && (
+            <span className="text-[11px] px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-100">
+              {meal.category}
+            </span>
+          )}
         </div>
+
+        {/* Cook time + servings + difficulty */}
+        {(minutes !== undefined || difficulty) && (
+          <div className="flex items-center justify-between mt-0.5 gap-2">
+            {minutes !== undefined && servings !== undefined ? (
+              <RecipeCardMeta minutes={minutes} servings={servings} />
+            ) : (
+              <span />
+            )}
+            {difficulty && <DifficultyStars difficulty={difficulty} size="sm" />}
+          </div>
+        )}
       </div>
     </Link>
   )

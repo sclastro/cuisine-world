@@ -105,8 +105,17 @@ export async function getMealsByAreaFull(area: string, limit = 48) {
   return hydrateSummaries(await getMealsByArea(area), limit)
 }
 
-export async function searchMealsByNameFull(query: string, limit = 48) {
-  return hydrateSummaries(await searchMealsByName(query), limit)
+// Search returns FULL raw meals from /search.php, so we transform them directly
+// instead of re-fetching each by id (avoids an N+1 round-trip that could drop
+// recipes on a flaky network and strip their difficulty/time data).
+export async function searchMealsByNameFull(
+  query: string
+): Promise<{ total: number; meals: Meal[]; restIds: string[] }> {
+  const data = await apiFetch<{ meals: RawMeal[] | null }>(
+    `/search.php?s=${encodeURIComponent(query)}`
+  )
+  const meals = (data?.meals ?? []).map(transformMeal)
+  return { total: meals.length, meals, restIds: [] }
 }
 
 export async function getAllCategories(): Promise<Category[]> {
