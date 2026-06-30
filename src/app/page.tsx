@@ -3,6 +3,9 @@ import Image from 'next/image'
 import { ChevronRight, Shuffle, Globe } from 'lucide-react'
 import { getAllCategories, getRandomMeals } from '@/lib/api'
 import { localizeMealsForList } from '@/lib/localize'
+import { categoryZh } from '@/lib/categories'
+import { getAreaInfo } from '@/lib/areas'
+import { LocalizedText } from '@/components/ui/LocalizedText'
 import { RecipeGrid } from '@/components/recipe/RecipeGrid'
 import { SearchBar } from '@/components/search/SearchBar'
 import { EverydayCookingSection } from '@/components/layout/EverydayCookingSection'
@@ -14,6 +17,7 @@ const COURSE_SECTIONS = [
     titleZh: '前菜',
     emoji: '🥗',
     description: 'Light bites to open your appetite',
+    descriptionZh: '開胃小食',
     href: '/category/Starter',
     bgColor: 'bg-lime-50',
     borderColor: 'border-lime-200',
@@ -25,6 +29,7 @@ const COURSE_SECTIONS = [
     titleZh: '湯品',
     emoji: '🍲',
     description: 'Warm, comforting bowls',
+    descriptionZh: '暖心靚湯',
     href: '/search?q=soup',
     bgColor: 'bg-orange-50',
     borderColor: 'border-orange-200',
@@ -36,6 +41,7 @@ const COURSE_SECTIONS = [
     titleZh: '主菜',
     emoji: '🍽️',
     description: 'Hearty dishes from the world',
+    descriptionZh: '世界各地豐盛主菜',
     href: '/category/Beef',
     bgColor: 'bg-green-50',
     borderColor: 'border-green-200',
@@ -47,6 +53,7 @@ const COURSE_SECTIONS = [
     titleZh: '甜品',
     emoji: '🍰',
     description: 'Sweet endings to every meal',
+    descriptionZh: '甜蜜收結每一餐',
     href: '/category/Dessert',
     bgColor: 'bg-pink-50',
     borderColor: 'border-pink-200',
@@ -68,17 +75,25 @@ export default async function HomePage() {
       <section className="text-center py-10 space-y-6 animate-fade-up">
         {/* Decorative pill */}
         <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-semibold tracking-wide">
-          🌍 Thousands of recipes · Free forever
+          <LocalizedText en="🌍 Thousands of recipes · Free forever" zh="🌍 數千份食譜 · 永久免費" />
         </span>
 
         <h1 className="text-4xl sm:text-5xl font-extrabold text-gray-900 leading-tight tracking-tight">
-          Explore the World&apos;s<br />
-          <span className="text-green-600">Cuisines</span>
+          <LocalizedText
+            en="Explore the World's"
+            zh="探索世界各地"
+          />
+          <br />
+          <span className="text-green-600">
+            <LocalizedText en="Cuisines" zh="美食" />
+          </span>
         </h1>
 
         <p className="text-gray-400 text-base sm:text-lg max-w-md mx-auto leading-relaxed">
-          From Thai street food to Italian classics —<br className="hidden sm:block" />
-          find your next favourite dish.
+          <LocalizedText
+            en="From Thai street food to Italian classics — find your next favourite dish."
+            zh="由泰式街頭小食到意大利經典 — 搵到你下一道至愛料理。"
+          />
         </p>
 
         <div className="max-w-md mx-auto">
@@ -93,7 +108,7 @@ export default async function HomePage() {
               href={`/area/${area}`}
               className="shrink-0 px-3 py-1 rounded-full bg-white border border-gray-200 text-xs text-gray-500 hover:border-green-400 hover:text-green-700 transition-colors"
             >
-              {area}
+              <LocalizedText en={area} zh={getAreaInfo(area).nameZh} />
             </Link>
           ))}
         </div>
@@ -102,8 +117,9 @@ export default async function HomePage() {
       {/* ── Browse by Course ──────────────────────────── */}
       <section className="space-y-5">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-bold text-gray-800">Browse by Course</h2>
-          <span className="text-xs text-gray-400">4 categories</span>
+          <h2 className="text-xl font-bold text-gray-800">
+            <LocalizedText en="Browse by Course" zh="按課題瀏覽" />
+          </h2>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 stagger">
           {COURSE_SECTIONS.map((section) => (
@@ -120,8 +136,12 @@ export default async function HomePage() {
                 {section.emoji}
               </span>
               <div>
-                <p className="font-bold text-gray-800 text-sm">{section.title}</p>
-                <p className="text-[11px] text-gray-400 mt-0.5 leading-relaxed">{section.description}</p>
+                <p className="font-bold text-gray-800 text-sm">
+                  <LocalizedText en={section.title} zh={section.titleZh} />
+                </p>
+                <p className="text-[11px] text-gray-400 mt-0.5 leading-relaxed">
+                  <LocalizedText en={section.description} zh={section.descriptionZh} />
+                </p>
               </div>
               <span className={`text-[11px] px-2.5 py-0.5 rounded-full font-semibold ${section.badgeColor}`}>
                 {section.titleZh}
@@ -141,10 +161,12 @@ export default async function HomePage() {
             <div className="w-7 h-7 rounded-full bg-green-100 flex items-center justify-center">
               <Shuffle size={14} className="text-green-600" />
             </div>
-            <h2 className="text-xl font-bold text-gray-800">Today&apos;s Picks</h2>
+            <h2 className="text-xl font-bold text-gray-800">
+              <LocalizedText en="Today's Picks" zh="今日精選" />
+            </h2>
           </div>
           <span className="text-xs text-gray-400 bg-gray-100 px-2.5 py-1 rounded-full">
-            Refreshed daily
+            <LocalizedText en="Refreshed daily" zh="每日更新" />
           </span>
         </div>
         <RecipeGrid meals={featuredMeals} showSnippet />
@@ -154,28 +176,35 @@ export default async function HomePage() {
       <section className="rounded-2xl bg-gradient-to-br from-green-600 to-emerald-700 p-8 text-white text-center space-y-4">
         <Globe size={32} className="mx-auto opacity-80" />
         <div className="space-y-1">
-          <h2 className="text-xl font-bold">Explore by Region</h2>
+          <h2 className="text-xl font-bold">
+            <LocalizedText en="Explore by Region" zh="按地區探索" />
+          </h2>
           <p className="text-green-100 text-sm">
-            Discover authentic dishes from over 25 cuisines worldwide
+            <LocalizedText
+              en="Discover home-style dishes from popular cuisines worldwide"
+              zh="探索世界各地熱門菜系嘅家常菜"
+            />
           </p>
         </div>
         <Link
           href="/area"
           className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-white text-green-700 text-sm font-semibold hover:bg-green-50 transition-colors shadow-md"
         >
-          Browse all regions <ChevronRight size={15} />
+          <LocalizedText en="Browse all regions" zh="瀏覽所有地區" /> <ChevronRight size={15} />
         </Link>
       </section>
 
       {/* ── All Categories ────────────────────────────── */}
       <section className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-bold text-gray-800">All Categories</h2>
+          <h2 className="text-xl font-bold text-gray-800">
+            <LocalizedText en="All Categories" zh="所有分類" />
+          </h2>
           <Link
             href="/category/Beef"
             className="text-sm text-green-600 hover:underline flex items-center gap-0.5"
           >
-            View all <ChevronRight size={14} />
+            <LocalizedText en="View all" zh="查看全部" /> <ChevronRight size={14} />
           </Link>
         </div>
         <div className="chips-scroll">
@@ -192,7 +221,7 @@ export default async function HomePage() {
                 height={20}
                 className="rounded-full object-cover w-5 h-5"
               />
-              {cat.name}
+              <LocalizedText en={cat.name} zh={categoryZh(cat.name)} />
             </Link>
           ))}
         </div>

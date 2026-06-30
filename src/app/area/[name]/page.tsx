@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation'
 import { getAreaMealsCombined, getAllAreas } from '@/lib/api'
 import { localizeMealsForList } from '@/lib/localize'
-import { getAreaInfo, AREA_INFO } from '@/lib/areas'
+import { getAreaInfo, AREA_INFO, curatedAreaList } from '@/lib/areas'
 import { BrowseResults } from '@/components/filters/BrowseResults'
 import { FilterChips } from '@/components/filters/FilterChips'
 import { AreaIntro } from '@/components/recipe/AreaIntro'
@@ -38,11 +38,15 @@ export default async function AreaPage({ params }: Props) {
   const meals = await localizeMealsForList(rawMeals)
   const info = getAreaInfo(area)
 
-  const chips = allAreas.map((a) => {
-    const ai = getAreaInfo(a.name)
-    return { label: `${ai.flag} ${a.name}`, href: `/area/${encodeURIComponent(a.name)}` }
+  const chips = curatedAreaList(allAreas.map((a) => a.name), area).map((name) => {
+    const ai = getAreaInfo(name)
+    return {
+      href: `/area/${encodeURIComponent(name)}`,
+      en: name,
+      zh: ai.nameZh,
+      prefix: ai.flag,
+    }
   })
-  const activeChipLabel = `${info.flag} ${area}`
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8 space-y-6">
@@ -57,7 +61,12 @@ export default async function AreaPage({ params }: Props) {
       />
 
       {/* Area filter chips */}
-      <FilterChips chips={chips} activeLabel={activeChipLabel} title="Browse by region" />
+      <FilterChips
+        chips={chips}
+        activeHref={`/area/${encodeURIComponent(area)}`}
+        titleEn="Browse by region"
+        titleZh="按地區瀏覽"
+      />
 
       {/* Results with difficulty filter + sort (TheMealDB + Spoonacular merged) */}
       <BrowseResults meals={meals} total={total} restIds={restIds} />

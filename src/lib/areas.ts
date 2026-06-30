@@ -190,6 +190,25 @@ export const AREA_INFO: Record<string, AreaInfo> = {
 // Regions we surface even though TheMealDB doesn't list them (filled by Spoonacular).
 export const SPOONACULAR_ONLY_AREAS = ['Korean']
 
+// A focused, curated set of popular cuisines for the region browser. TheMealDB
+// lists ~30 areas including many obscure ones (Croatian, Kenyan, Tunisian…);
+// surfacing every one makes the selector noisy. We narrow it to the cuisines
+// people actually look for, in a sensible order.
+export const CURATED_AREAS = [
+  'Chinese', 'Japanese', 'Korean', 'Thai', 'Vietnamese', 'Malaysian',
+  'Indian', 'Italian', 'French', 'Greek', 'Spanish',
+  'American', 'British', 'Mexican',
+]
+
+// Intersect the curated list with what's actually available (keeps order), and
+// guarantee `current` is present so the active region always shows as a chip.
+export function curatedAreaList(available: string[], current?: string): string[] {
+  const have = new Set(available)
+  const list = CURATED_AREAS.filter((a) => have.has(a))
+  if (current && !list.includes(current) && have.has(current)) list.push(current)
+  return list
+}
+
 // Look up display metadata with a graceful fallback for unknown areas.
 export function getAreaInfo(area: string): AreaInfo {
   return (

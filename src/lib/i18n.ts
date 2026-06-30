@@ -46,6 +46,23 @@ const STRINGS = {
   'everyday.worldDesc':  { en: 'Western & Mediterranean everyday dishes', zh: '西式及地中海家常菜' },
   'everyday.browse':     { en: 'Browse all →',  zh: '瀏覽全部 →' },
 
+  // Favorites
+  'fav.title':      { en: 'My Favorites',     zh: '我的收藏' },
+  'fav.saved':      { en: 'saved recipes',    zh: '個已收藏食譜' },
+  'fav.emptyTitle': { en: 'No favorites yet', zh: '仲未有收藏' },
+  'fav.emptyDesc':  { en: 'Tap the heart on any recipe to save it here.', zh: '㩒任何食譜上嘅心心，就會收藏喺呢度。' },
+  'fav.explore':    { en: 'Start Exploring',  zh: '開始探索' },
+
+  // Menu builder
+  'menu.buildTitle':     { en: 'Build Your Perfect Meal', zh: '砌出你嘅完美一餐' },
+  'menu.buildSubtitle':  { en: 'Curate your ideal dining experience — one course at a time', zh: '逐道菜，砌出你理想嘅一餐' },
+  'menu.label':          { en: 'Menu:',   zh: '菜單：' },
+  'menu.clear':          { en: 'Clear',   zh: '清除' },
+  'menu.coursesPart':    { en: 'of 4 courses selected', zh: '/ 4 道菜已選' },
+  'menu.complete':       { en: ' — Your menu is complete! 🎉', zh: ' — 你嘅菜單完成喇！🎉' },
+  'menu.inspireTitle':   { en: 'Need Inspiration?', zh: '需要靈感？' },
+  'menu.inspireSubtitle':{ en: 'Start with one of our curated menus and make it yours', zh: '由我哋精選嘅菜單開始，再改成你嘅版本' },
+
   // Difficulty labels
   'diff.easy':    { en: 'Easy',        zh: '初級' },
   'diff.medEasy': { en: 'Medium-Easy', zh: '初中級' },

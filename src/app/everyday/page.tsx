@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { ChevronRight } from 'lucide-react'
+import { LocalizedText } from '@/components/ui/LocalizedText'
 
 export const dynamic = 'force-dynamic'
 
@@ -51,9 +52,11 @@ export default function EverydayPage() {
     <div className="max-w-4xl mx-auto px-4 py-12 space-y-10">
       <div className="text-center space-y-2">
         <h1 className="text-3xl font-extrabold text-gray-900">
-          🍳 Everyday Cooking
+          🍳 <LocalizedText en="Everyday Cooking" zh="家常煮意" />
         </h1>
-        <p className="text-gray-400 text-sm">Simple, approachable dishes for every day</p>
+        <p className="text-gray-400 text-sm">
+          <LocalizedText en="Simple, approachable dishes for every day" zh="簡單易做，天天都好味" />
+        </p>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 stagger">
@@ -71,14 +74,18 @@ export default function EverydayPage() {
               {s.emoji}
             </span>
             <div>
-              <p className="font-bold text-gray-800">{s.en}</p>
-              <p className="text-xs text-gray-400 mt-1 leading-relaxed">{s.descEn}</p>
+              <p className="font-bold text-gray-800">
+                <LocalizedText en={s.en} zh={s.zh} />
+              </p>
+              <p className="text-xs text-gray-400 mt-1 leading-relaxed">
+                <LocalizedText en={s.descEn} zh={s.descZh} />
+              </p>
             </div>
             <span className={`text-xs px-2.5 py-0.5 rounded-full font-semibold ${s.badge}`}>
               {s.zh}
             </span>
             <span className="text-xs text-gray-400 flex items-center gap-0.5 group-hover:text-green-600 transition-colors">
-              Browse <ChevronRight size={12} />
+              <LocalizedText en="Browse" zh="瀏覽" /> <ChevronRight size={12} />
             </span>
           </Link>
         ))}

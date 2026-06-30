@@ -5,6 +5,7 @@ import { useEffect } from 'react'
 import { Trash2 } from 'lucide-react'
 import { useMenu } from '@/context/MenuContext'
 import { getMealsByIds } from '@/lib/api'
+import { useT } from '@/hooks/useT'
 import { MenuSlot } from './MenuSlot'
 import { PresetMenuCard } from './PresetMenuCard'
 import { ShareMenuButton } from './ShareMenuButton'
@@ -30,6 +31,7 @@ interface Props {
 function MenuBuilderInner({ presetsWithMeals }: Props) {
   const searchParams = useSearchParams()
   const { menu, clearMenu, loadPreset, mounted } = useMenu()
+  const t = useT()
 
   // Load shared menu from URL params on first mount
   useEffect(() => {
@@ -64,17 +66,17 @@ function MenuBuilderInner({ presetsWithMeals }: Props) {
       {/* Page header */}
       <div className="text-center space-y-2">
         <h1 className="text-3xl font-bold text-gray-900">
-          Build Your Perfect Meal 🍽️
+          {t('menu.buildTitle')} 🍽️
         </h1>
         <p className="text-gray-400 text-sm">
-          Curate your ideal dining experience — one course at a time
+          {t('menu.buildSubtitle')}
         </p>
       </div>
 
       {/* Menu name + actions */}
       <div className="flex items-center justify-between gap-3 flex-wrap">
         <div className="flex items-center gap-2">
-          <span className="text-sm text-gray-400 font-medium">Menu:</span>
+          <span className="text-sm text-gray-400 font-medium">{t('menu.label')}</span>
           {mounted ? (
             <span className="text-sm font-semibold text-gray-800 bg-green-50 px-3 py-1 rounded-full border border-green-100">
               {menu.name}
@@ -91,7 +93,7 @@ function MenuBuilderInner({ presetsWithMeals }: Props) {
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors border border-transparent hover:border-red-100"
             >
               <Trash2 size={13} />
-              Clear
+              {t('menu.clear')}
             </button>
           )}
         </div>
@@ -108,8 +110,8 @@ function MenuBuilderInner({ presetsWithMeals }: Props) {
 
         {filledCount > 0 && (
           <p className="text-center text-xs text-gray-400">
-            {filledCount} of 4 courses selected
-            {filledCount === 4 && ' — Your menu is complete! 🎉'}
+            {filledCount} {t('menu.coursesPart')}
+            {filledCount === 4 && t('menu.complete')}
           </p>
         )}
       </div>
@@ -117,9 +119,9 @@ function MenuBuilderInner({ presetsWithMeals }: Props) {
       {/* Preset menus */}
       <section className="space-y-4">
         <div className="text-center space-y-1">
-          <h2 className="text-lg font-bold text-gray-800">Need Inspiration?</h2>
+          <h2 className="text-lg font-bold text-gray-800">{t('menu.inspireTitle')}</h2>
           <p className="text-sm text-gray-400">
-            Start with one of our curated menus and make it yours
+            {t('menu.inspireSubtitle')}
           </p>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">

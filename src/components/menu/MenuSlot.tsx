@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { Plus, X } from 'lucide-react'
 import type { MealSummary, CourseType } from '@/lib/types'
 import { useMenu } from '@/context/MenuContext'
+import { useLanguage } from '@/context/LanguageContext'
 import { cn } from '@/lib/utils'
 
 const COURSE_CONFIG: Record<CourseType, {
@@ -23,7 +24,7 @@ const COURSE_CONFIG: Record<CourseType, {
   },
   soup: {
     label: 'Soup', labelZh: '湯品', emoji: '🍲',
-    browseHref: '/category/Soup',
+    browseHref: '/search?q=soup',
     bg: 'bg-orange-50', border: 'border-orange-200', badgeBg: 'bg-orange-100 text-orange-700',
   },
   main: {
@@ -44,8 +45,10 @@ interface Props {
 
 export function MenuSlot({ course }: Props) {
   const { menu, setSlot } = useMenu()
+  const { lang } = useLanguage()
   const config = COURSE_CONFIG[course]
   const meal: MealSummary | null = menu[course]
+  const courseLabel = lang === 'zh' ? config.labelZh : config.label
 
   if (!meal) {
     return (
@@ -68,7 +71,7 @@ export function MenuSlot({ course }: Props) {
           )}
         >
           <Plus size={12} />
-          Browse {config.label}
+          {lang === 'zh' ? `揀${config.labelZh}` : `Browse ${config.label}`}
         </Link>
       </div>
     )
@@ -90,7 +93,7 @@ export function MenuSlot({ course }: Props) {
           'absolute top-2 left-2 text-xs font-semibold px-2.5 py-0.5 rounded-full',
           config.badgeBg
         )}>
-          {config.emoji} {config.label}
+          {config.emoji} {courseLabel}
         </span>
         {/* Remove button */}
         <button
@@ -120,7 +123,7 @@ export function MenuSlot({ course }: Props) {
             onClick={() => setSlot(course, null)}
             className="ml-auto text-[11px] text-gray-400 hover:text-red-500 transition-colors"
           >
-            Change
+            {lang === 'zh' ? '更換' : 'Change'}
           </button>
         </div>
       </div>
