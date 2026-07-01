@@ -247,3 +247,25 @@ export async function searchSpoonacularByCuisine(
   const meals = data.results.map((r) => transformRecipe(r, null))
   return { total: data.totalResults, meals }
 }
+
+// Generic complexSearch used by the Explore page. Accepts any Spoonacular
+// filter params (diet, type, cuisine, maxReadyTime, maxCalories, minProtein…).
+// Returns [] without a key. No YouTube lookup (saves quota on a browse view).
+export async function searchSpoonacularRecipes(
+  params: Record<string, string>,
+  number = 24
+): Promise<Meal[]> {
+  const data = await spFetch<ComplexSearchResponse>(
+    '/recipes/complexSearch',
+    {
+      addRecipeInformation: 'true',
+      fillIngredients: 'true',
+      includeNutrition: 'true',
+      number: String(number),
+      sort: 'popularity',
+      ...params,
+    }
+  )
+  if (!data) return []
+  return data.results.map((r) => transformRecipe(r, null))
+}

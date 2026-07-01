@@ -3,6 +3,7 @@ import { translateToZh, translateManyToZh } from './translate'
 import { getAreaInfo } from './areas'
 import { categoryZh } from './categories'
 import { getNutrition } from './openFoodFacts'
+import { resolveDescription } from './recipeDescriptions'
 
 // Attaches Chinese translations to meals, server-side.
 //
@@ -16,13 +17,17 @@ import { getNutrition } from './openFoodFacts'
 export async function localizeMealsForList(meals: Meal[]): Promise<Meal[]> {
   const namesZh = await translateManyToZh(meals.map((m) => m.name))
   const snippetsZh = await translateManyToZh(meals.map((m) => m.snippet ?? ''))
-  return meals.map((m, i) => ({
-    ...m,
-    nameZh: namesZh[i],
-    snippetZh: snippetsZh[i],
-    areaZh: m.area ? getAreaInfo(m.area).nameZh : '',
-    categoryZh: m.category ? categoryZh(m.category) : '',
-  }))
+  return meals.map((m, i) => {
+    const withZh: Meal = {
+      ...m,
+      nameZh: namesZh[i],
+      snippetZh: snippetsZh[i],
+      areaZh: m.area ? getAreaInfo(m.area).nameZh : '',
+      categoryZh: m.category ? categoryZh(m.category) : '',
+    }
+    const desc = resolveDescription(withZh)
+    return { ...withZh, description: desc.en, descriptionZh: desc.zh }
+  })
 }
 
 // Detail view: everything, including ingredients and step-by-step instructions.
@@ -42,7 +47,7 @@ export async function localizeMealFull(meal: Meal): Promise<Meal> {
       nutritionPromise,
     ])
 
-  return {
+  const withZh: Meal = {
     ...meal,
     nameZh,
     snippetZh,
@@ -53,4 +58,6 @@ export async function localizeMealFull(meal: Meal): Promise<Meal> {
     tagsZh,
     nutrition: nutrition ?? undefined,
   }
+  const desc = resolveDescription(withZh)
+  return { ...withZh, description: desc.en, descriptionZh: desc.zh }
 }

@@ -10,20 +10,25 @@ interface Props {
   meal: MealSummary
   difficulty?: DifficultyScore
   snippet?: string
+  description?: string
   minutes?: number
   servings?: number
   calories?: number
   // Server-provided Chinese translations (optional; falls back to English).
   nameZh?: string
   snippetZh?: string
+  descriptionZh?: string
   areaZh?: string
   categoryZh?: string
 }
 
 export function RecipeCard({
-  meal, difficulty, snippet, minutes, servings, calories,
-  nameZh, snippetZh, areaZh, categoryZh,
+  meal, difficulty, snippet, description, minutes, servings, calories,
+  nameZh, snippetZh, descriptionZh, areaZh, categoryZh,
 }: Props) {
+  // Prefer the appealing blurb; fall back to the raw instruction snippet.
+  const blurb = description ?? snippet
+  const blurbZh = description ? descriptionZh : snippetZh
   return (
     <Link
       href={`/recipe/${meal.id}`}
@@ -54,9 +59,9 @@ export function RecipeCard({
           <LocalizedText en={meal.name} zh={nameZh} />
         </h3>
 
-        {snippet && (
+        {blurb && (
           <p className="text-[11px] text-gray-400 line-clamp-2 leading-relaxed">
-            <LocalizedText en={snippet} zh={snippetZh} />
+            <LocalizedText en={blurb} zh={blurbZh} />
           </p>
         )}
 

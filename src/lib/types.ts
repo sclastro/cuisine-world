@@ -83,6 +83,10 @@ export interface Meal {
   estServings: number
   source?: 'spoonacular'
   nutrition?: NutritionData
+  // Appealing, original blurb (curated or generated) — replaces the raw
+  // instruction snippet in card + detail views when present.
+  description?: string
+  descriptionZh?: string
   // Chinese (zh-TW) translations, filled server-side and cached. Optional so a
   // meal is still valid before localization; the UI falls back to English.
   nameZh?: string

@@ -76,6 +76,21 @@ const STRINGS = {
   'menu.inspireTitle':   { en: 'Need Inspiration?', zh: '需要靈感？' },
   'menu.inspireSubtitle':{ en: 'Start with one of our curated menus and make it yours', zh: '由我哋精選嘅菜單開始，再改成你嘅版本' },
 
+  // Explore
+  'nav.explore':       { en: 'Explore',            zh: '探索' },
+  'explore.title':     { en: 'Find Your Recipe',   zh: '搵到你嘅食譜' },
+  'explore.subtitle':  { en: "Tell us what you're in the mood for — pick as many or as few as you like.", zh: '話俾我哋知你想食咩 — 揀幾多個都得。' },
+  'explore.dietary':   { en: 'Dietary Preference', zh: '飲食偏好' },
+  'explore.health':    { en: 'Health Goal',        zh: '健康目標' },
+  'explore.style':     { en: 'Cooking Style',      zh: '烹飪風格' },
+  'explore.find':      { en: 'Find Recipes',       zh: '搵食譜' },
+  'explore.finding':   { en: 'Finding…',           zh: '搵緊…' },
+  'explore.reset':     { en: 'Reset',              zh: '重設' },
+  'explore.surprise':  { en: 'Surprise Me',        zh: '今日試下呢個？' },
+  'explore.results':   { en: 'Matching recipes',   zh: '符合嘅食譜' },
+  'explore.noResults': { en: 'No matches — try fewer or different filters.', zh: '冇符合嘅食譜 — 試下少啲或者唔同嘅選項。' },
+  'explore.startHint': { en: 'Pick a few options above, then hit Find Recipes.', zh: '喺上面揀幾個選項，再撳「搵食譜」。' },
+
   // Difficulty labels
   'diff.easy':    { en: 'Easy',        zh: '初級' },
   'diff.medEasy': { en: 'Medium-Easy', zh: '初中級' },

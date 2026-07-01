@@ -10,6 +10,7 @@ import { useLanguage } from '@/context/LanguageContext'
 import { cn } from '@/lib/utils'
 
 const NAV_LABELS: Record<string, { en: string; zh: string }> = {
+  explore:   { en: 'Explore',      zh: '探索' },
   starters:  { en: 'Starters',     zh: '前菜' },
   everyday:  { en: 'Home Cooking', zh: '家常菜' },
   mains:     { en: 'Mains',        zh: '主菜' },
@@ -35,6 +36,7 @@ export function Header() {
     lang === 'zh' ? NAV_LABELS[key].zh : NAV_LABELS[key].en
 
   const navLinks = [
+    { href: '/explore',          label: label('explore') },
     { href: '/category/Starter', label: label('starters') },
     { href: '/everyday',         label: label('everyday') },
     { href: '/category/Beef',    label: label('mains') },

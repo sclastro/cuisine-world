@@ -113,6 +113,13 @@ export function RecipeDetail({ meal }: Props) {
         </div>
       </div>
 
+      {/* Appealing intro blurb */}
+      {meal.description && (
+        <p className="text-[15px] leading-relaxed text-gray-600 border-l-4 border-green-200 pl-4 italic">
+          <LocalizedText en={meal.description} zh={meal.descriptionZh} />
+        </p>
+      )}
+
       {/* Ingredients */}
       <section className="space-y-3">
         <h2 className="text-lg font-bold text-gray-800">
