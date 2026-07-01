@@ -1,4 +1,4 @@
-import type { Meal, Ingredient, DifficultyScore } from './types'
+import type { Meal, Ingredient, DifficultyScore, NutritionData } from './types'
 import { calculateDifficulty, extractSnippet } from './utils'
 import { searchCookingVideo } from './youtube'
 
@@ -24,6 +24,12 @@ interface SpoonacularInstructionGroup {
   steps: SpoonacularStep[]
 }
 
+interface SpoonacularNutrient {
+  name: string
+  amount: number
+  unit: string
+}
+
 interface SpoonacularRecipe {
   id: number
   title: string
@@ -37,6 +43,7 @@ interface SpoonacularRecipe {
   spoonacularSourceUrl?: string
   analyzedInstructions: SpoonacularInstructionGroup[]
   extendedIngredients: SpoonacularIngredient[]
+  nutrition?: { nutrients: SpoonacularNutrient[] }
 }
 
 interface ComplexSearchResponse {
@@ -88,6 +95,24 @@ function toDifficulty(
 ): DifficultyScore {
   const joined = instructions.join(' ')
   return calculateDifficulty(ingredients, instructions, joined)
+}
+
+// Pull the 4 headline macros (per serving) out of Spoonacular's nutrient list.
+// Returns undefined when nutrition wasn't requested/available.
+function toNutrition(raw: SpoonacularRecipe): NutritionData | undefined {
+  const nutrients = raw.nutrition?.nutrients
+  if (!nutrients?.length) return undefined
+  const find = (name: string) =>
+    nutrients.find((n) => n.name.toLowerCase() === name.toLowerCase())?.amount
+  const calories = find('Calories')
+  if (calories == null) return undefined
+  return {
+    calories: Math.round(calories),
+    protein: Math.round(find('Protein') ?? 0),
+    fat: Math.round(find('Fat') ?? 0),
+    carbs: Math.round(find('Carbohydrates') ?? 0),
+    source: 'spoonacular',
+  }
 }
 
 // Map Spoonacular cuisine names to our standard area labels (TheMealDB style)
@@ -144,6 +169,7 @@ function transformRecipe(raw: SpoonacularRecipe, youtubeUrl: string | null): Mea
     estTimeMinutes: raw.readyInMinutes ?? 30,
     estServings: raw.servings ?? 4,
     source: 'spoonacular',
+    nutrition: toNutrition(raw),
   }
 }
 
@@ -153,7 +179,7 @@ function transformRecipe(raw: SpoonacularRecipe, youtubeUrl: string | null): Mea
 export async function getSpoonacularMealById(id: number): Promise<Meal | null> {
   const raw = await spFetch<SpoonacularRecipe>(
     `/recipes/${id}/information`,
-    { includeNutrition: 'false', addRecipeInformation: 'true', fillIngredients: 'true' },
+    { includeNutrition: 'true', addRecipeInformation: 'true', fillIngredients: 'true' },
     86400
   )
   if (!raw) return null
@@ -184,6 +210,7 @@ export async function searchEverydayRecipes(
     {
       addRecipeInformation: 'true',
       fillIngredients: 'true',
+      includeNutrition: 'true',
       number: String(number),
       sort: 'popularity',
       ...extra,
@@ -209,6 +236,7 @@ export async function searchSpoonacularByCuisine(
       cuisine,
       addRecipeInformation: 'true',
       fillIngredients: 'true',
+      includeNutrition: 'true',
       number: String(number),
       sort: 'popularity',
     }

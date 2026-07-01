@@ -1,8 +1,10 @@
 'use client'
 
-import { useMemo, useState, useTransition } from 'react'
+import { useEffect, useMemo, useRef, useState, useTransition } from 'react'
+import { useRouter } from 'next/navigation'
+import { Sparkles } from 'lucide-react'
 import type { Meal } from '@/lib/types'
-import { applyFilterSort, type SortKey } from '@/lib/utils'
+import { applyFilterSort, shuffleArray, type SortKey } from '@/lib/utils'
 import { loadMoreMeals } from '@/app/actions'
 import { RecipeGrid } from '@/components/recipe/RecipeGrid'
 import { RecipeFilterBar } from './RecipeFilterBar'
@@ -20,12 +22,22 @@ const BATCH = 12
 // meals, plus on-demand "load more" of any remaining recipes.
 export function BrowseResults({ meals, total, restIds = [] }: Props) {
   const t = useT()
+  const router = useRouter()
   const [difficulties, setDifficulties] = useState<number[]>([])
   const [sort, setSort] = useState<SortKey>('name-asc')
 
   const [loaded, setLoaded] = useState<Meal[]>(meals)
   const [pendingIds, setPendingIds] = useState<string[]>(restIds)
   const [isLoading, startTransition] = useTransition()
+
+  // Randomise the order once on entry (client-only, so no hydration mismatch).
+  const didInitShuffle = useRef(false)
+  useEffect(() => {
+    if (didInitShuffle.current) return
+    didInitShuffle.current = true
+    setLoaded((prev) => shuffleArray(prev))
+    setSort('shuffle')
+  }, [])
 
   const visible = useMemo(
     () => applyFilterSort(loaded, difficulties, sort),
@@ -36,6 +48,19 @@ export function BrowseResults({ meals, total, restIds = [] }: Props) {
     setDifficulties((prev) =>
       prev.includes(stars) ? prev.filter((s) => s !== stars) : [...prev, stars]
     )
+  }
+
+  // Reshuffle the underlying pool. Because we reorder `loaded` itself (not the
+  // memo), a later "load more" appends without disturbing this order.
+  function shuffle() {
+    setLoaded((prev) => shuffleArray(prev))
+    setSort('shuffle')
+  }
+
+  function surpriseMe() {
+    if (visible.length === 0) return
+    const pick = visible[Math.floor(Math.random() * visible.length)]
+    router.push(`/recipe/${pick.id}`)
   }
 
   function clear() {
@@ -66,11 +91,27 @@ export function BrowseResults({ meals, total, restIds = [] }: Props) {
           onToggleDifficulty={toggleDifficulty}
           sort={sort}
           onSortChange={setSort}
+          onShuffle={shuffle}
           onClear={clear}
         />
       )}
 
-      {countLine && <p className="text-xs text-gray-400">{countLine}</p>}
+      <div className="flex items-center justify-between gap-3">
+        {countLine ? (
+          <p className="text-xs text-gray-400">{countLine}</p>
+        ) : (
+          <span />
+        )}
+        {loaded.length > 0 && (
+          <button
+            onClick={surpriseMe}
+            className="flex items-center gap-1.5 shrink-0 px-3.5 py-1.5 rounded-full text-xs font-medium text-white bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 shadow-sm transition-colors"
+          >
+            <Sparkles size={13} />
+            {t('filter.surprise')}
+          </button>
+        )}
+      </div>
 
       <RecipeGrid
         meals={visible}

@@ -12,6 +12,7 @@ interface Props {
   snippet?: string
   minutes?: number
   servings?: number
+  calories?: number
   // Server-provided Chinese translations (optional; falls back to English).
   nameZh?: string
   snippetZh?: string
@@ -20,7 +21,7 @@ interface Props {
 }
 
 export function RecipeCard({
-  meal, difficulty, snippet, minutes, servings,
+  meal, difficulty, snippet, minutes, servings, calories,
   nameZh, snippetZh, areaZh, categoryZh,
 }: Props) {
   return (
@@ -40,6 +41,11 @@ export function RecipeCard({
         <div className="absolute top-2 right-2">
           <FavoriteButton mealId={meal.id} />
         </div>
+        {calories !== undefined && (
+          <span className="absolute bottom-2 left-2 flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-black/55 text-white text-[10px] font-medium backdrop-blur-sm">
+            🔥 {calories} kcal
+          </span>
+        )}
       </div>
 
       {/* Info */}

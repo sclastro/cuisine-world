@@ -111,7 +111,7 @@ export function estimateMealMeta(
   return { minutes, servings }
 }
 
-export type SortKey = 'name-asc' | 'diff-asc' | 'diff-desc'
+export type SortKey = 'name-asc' | 'diff-asc' | 'diff-desc' | 'shuffle'
 
 // Client-side filter + sort over already-fetched full meals.
 // `difficulties` is a set of star tiers (1–5); empty means "all".
@@ -135,8 +135,24 @@ export function applyFilterSort(
     case 'diff-desc':
       sorted.sort((a, b) => b.difficulty.stars - a.difficulty.stars || a.name.localeCompare(b.name))
       break
+    case 'shuffle':
+      // Passthrough: preserve the caller's current order. The random reshuffle
+      // is applied to the source array itself (see BrowseResults.shuffle), so
+      // "load more" appends without disturbing the already-shuffled order.
+      break
   }
   return sorted
+}
+
+// Returns a new Fisher-Yates–shuffled copy. Client-only (uses Math.random),
+// so callers must invoke it on user action / in an effect — never during SSR.
+export function shuffleArray<T>(arr: T[]): T[] {
+  const out = [...arr]
+  for (let i = out.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[out[i], out[j]] = [out[j], out[i]]
+  }
+  return out
 }
 
 // Pulls the 11-char video id out of any common YouTube URL shape

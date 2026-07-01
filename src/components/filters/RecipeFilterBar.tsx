@@ -1,6 +1,6 @@
 'use client'
 
-import { SlidersHorizontal } from 'lucide-react'
+import { SlidersHorizontal, Shuffle } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useT } from '@/hooks/useT'
 import { DIFF_KEY, type TranslationKey } from '@/lib/i18n'
@@ -11,6 +11,7 @@ interface Props {
   onToggleDifficulty: (stars: number) => void
   sort: SortKey
   onSortChange: (s: SortKey) => void
+  onShuffle: () => void
   onClear: () => void
 }
 
@@ -18,9 +19,10 @@ const SORTS: { key: SortKey; label: TranslationKey }[] = [
   { key: 'name-asc', label: 'sort.name' },
   { key: 'diff-asc', label: 'sort.diffAsc' },
   { key: 'diff-desc', label: 'sort.diffDesc' },
+  { key: 'shuffle',  label: 'filter.shuffle' },
 ]
 
-export function RecipeFilterBar({ difficulties, onToggleDifficulty, sort, onSortChange, onClear }: Props) {
+export function RecipeFilterBar({ difficulties, onToggleDifficulty, sort, onSortChange, onShuffle, onClear }: Props) {
   const t = useT()
   const hasFilters = difficulties.length > 0 || sort !== 'name-asc'
 
@@ -65,6 +67,20 @@ export function RecipeFilterBar({ difficulties, onToggleDifficulty, sort, onSort
           ))}
         </select>
       </label>
+
+      {/* Shuffle: re-randomises the visible order each click */}
+      <button
+        onClick={onShuffle}
+        className={cn(
+          'flex items-center gap-1.5 px-3 py-1 rounded-full text-xs border transition-colors',
+          sort === 'shuffle'
+            ? 'bg-green-600 text-white border-green-600'
+            : 'bg-white text-green-700 border-green-200 hover:bg-green-50 hover:border-green-400'
+        )}
+      >
+        <Shuffle size={13} />
+        {t('filter.shuffle')}
+      </button>
 
       {hasFilters && (
         <button

@@ -9,6 +9,7 @@ import { LocalizedText } from '@/components/ui/LocalizedText'
 import { IngredientList } from './IngredientList'
 import { CookingMode } from './CookingMode'
 import { RecipeEstimates } from './RecipeEstimates'
+import { NutritionPanel } from './NutritionPanel'
 import { getYoutubeWatchUrl, getYoutubeEmbedUrl } from '@/lib/utils'
 
 interface Props {
@@ -169,6 +170,9 @@ export function RecipeDetail({ meal }: Props) {
           )}
         </section>
       )}
+
+      {/* Nutrition — Spoonacular (per serving) or Open Food Facts (estimated) */}
+      {meal.nutrition && <NutritionPanel nutrition={meal.nutrition} />}
 
       {/* Source link — always shown when present, alongside the video */}
       {meal.sourceUrl && (

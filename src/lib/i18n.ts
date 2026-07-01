@@ -29,6 +29,19 @@ const STRINGS = {
   'filter.recipes':    { en: 'recipes',    zh: '道食譜' },
   'filter.loadMore':   { en: 'Load more',  zh: '載入更多' },
   'filter.loading':    { en: 'Loading…',   zh: '載入中…' },
+  'filter.shuffle':    { en: 'Shuffle',     zh: '隨機排列' },
+  'filter.surprise':   { en: 'Surprise Me', zh: '今日試下呢個？' },
+
+  // Nutrition
+  'nutrition.title':   { en: 'Nutrition (per serving)', zh: '營養資訊（每份）' },
+  'nutrition.cal':     { en: 'Calories', zh: '卡路里' },
+  'nutrition.protein': { en: 'Protein',  zh: '蛋白質' },
+  'nutrition.fat':     { en: 'Fat',      zh: '脂肪' },
+  'nutrition.carbs':   { en: 'Carbs',    zh: '碳水化合物' },
+  'nutrition.est':     { en: 'estimated', zh: '估算' },
+  'nutrition.g':       { en: 'g',        zh: '克' },
+  'nutrition.kcal':    { en: 'kcal',     zh: '千卡' },
+  'nutrition.source':  { en: 'Source: Open Food Facts', zh: '資料來源：Open Food Facts' },
 
   'sort.name':     { en: 'Name A–Z',      zh: '名稱 A–Z' },
   'sort.diffAsc':  { en: 'Easiest first', zh: '由易到難' },

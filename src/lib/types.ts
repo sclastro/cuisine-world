@@ -56,6 +56,16 @@ export interface Ingredient {
   imageUrl: string
 }
 
+// Per-serving macros. `source` distinguishes reliable API data (Spoonacular)
+// from Open Food Facts lookups (per-100g, approximate) so the UI can label it.
+export interface NutritionData {
+  calories: number
+  protein: number
+  fat: number
+  carbs: number
+  source: 'spoonacular' | 'openfoodfacts'
+}
+
 export interface Meal {
   id: string
   name: string
@@ -72,6 +82,7 @@ export interface Meal {
   estTimeMinutes: number
   estServings: number
   source?: 'spoonacular'
+  nutrition?: NutritionData
   // Chinese (zh-TW) translations, filled server-side and cached. Optional so a
   // meal is still valid before localization; the UI falls back to English.
   nameZh?: string

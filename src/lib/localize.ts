@@ -2,6 +2,7 @@ import type { Meal } from './types'
 import { translateToZh, translateManyToZh } from './translate'
 import { getAreaInfo } from './areas'
 import { categoryZh } from './categories'
+import { getNutrition } from './openFoodFacts'
 
 // Attaches Chinese translations to meals, server-side.
 //
@@ -26,13 +27,19 @@ export async function localizeMealsForList(meals: Meal[]): Promise<Meal[]> {
 
 // Detail view: everything, including ingredients and step-by-step instructions.
 export async function localizeMealFull(meal: Meal): Promise<Meal> {
-  const [nameZh, snippetZh, instructionsZh, ingredientsZh, tagsZh] =
+  // Spoonacular meals already carry nutrition; for the rest, try Open Food Facts.
+  const nutritionPromise = meal.nutrition
+    ? Promise.resolve(meal.nutrition)
+    : getNutrition(meal.name)
+
+  const [nameZh, snippetZh, instructionsZh, ingredientsZh, tagsZh, nutrition] =
     await Promise.all([
       translateToZh(meal.name),
       translateToZh(meal.snippet ?? ''),
       translateManyToZh(meal.instructions),
       translateManyToZh(meal.ingredients.map((ing) => ing.name)),
       translateManyToZh(meal.tags),
+      nutritionPromise,
     ])
 
   return {
@@ -44,5 +51,6 @@ export async function localizeMealFull(meal: Meal): Promise<Meal> {
     instructionsZh,
     ingredientsZh,
     tagsZh,
+    nutrition: nutrition ?? undefined,
   }
 }

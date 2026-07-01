@@ -24,6 +24,7 @@ export function RecipeGrid({ meals, emptyMessage = 'No recipes found.', showSnip
           snippet={showSnippet && 'snippet' in meal ? meal.snippet : undefined}
           minutes={'estTimeMinutes' in meal ? meal.estTimeMinutes : undefined}
           servings={'estServings' in meal ? meal.estServings : undefined}
+          calories={'nutrition' in meal ? meal.nutrition?.calories : undefined}
           nameZh={'nameZh' in meal ? meal.nameZh : undefined}
           snippetZh={showSnippet && 'snippetZh' in meal ? meal.snippetZh : undefined}
           areaZh={'areaZh' in meal ? meal.areaZh : undefined}
