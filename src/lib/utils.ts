@@ -189,3 +189,9 @@ export function getYoutubeEmbedUrl(url: string | null): string | null {
 export function menuToShareUrl(menuId: string, baseUrl: string): string {
   return `${baseUrl}/menu/shared?id=${menuId}`
 }
+
+// Encodes a favorites list as a shareable URL. Ids are already alphanumeric
+// (TheMealDB numeric ids or `sp_12345`), so a plain comma-join is URL-safe.
+export function favoritesToShareUrl(ids: string[], baseUrl: string): string {
+  return `${baseUrl}/favorites?ids=${ids.join(',')}`
+}

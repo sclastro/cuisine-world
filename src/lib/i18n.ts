@@ -65,6 +65,8 @@ const STRINGS = {
   'fav.emptyTitle': { en: 'No favorites yet', zh: '仲未有收藏' },
   'fav.emptyDesc':  { en: 'Tap the heart on any recipe to save it here.', zh: '㩒任何食譜上嘅心心，就會收藏喺呢度。' },
   'fav.explore':    { en: 'Start Exploring',  zh: '開始探索' },
+  'fav.share':       { en: 'Share favorites', zh: '分享收藏' },
+  'fav.linkCopied':  { en: 'Link copied!',    zh: '連結已複製！' },
 
   // Menu builder
   'menu.buildTitle':     { en: 'Build Your Perfect Meal', zh: '砌出你嘅完美一餐' },

@@ -6,6 +6,7 @@ interface FavoritesContextValue {
   favorites: Set<string>
   isFavorite: (id: string) => boolean
   toggleFavorite: (id: string) => void
+  importFavorites: (ids: string[]) => void
   mounted: boolean
 }
 
@@ -13,6 +14,7 @@ const FavoritesContext = createContext<FavoritesContextValue>({
   favorites: new Set(),
   isFavorite: () => false,
   toggleFavorite: () => {},
+  importFavorites: () => {},
   mounted: false,
 })
 
@@ -50,8 +52,15 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
     })
   }
 
+  // Merges incoming ids into the existing set (used by shared favorites
+  // links) — never wipes what the visitor already has saved.
+  function importFavorites(ids: string[]) {
+    if (ids.length === 0) return
+    setFavorites((prev) => new Set([...prev, ...ids]))
+  }
+
   return (
-    <FavoritesContext.Provider value={{ favorites, isFavorite, toggleFavorite, mounted }}>
+    <FavoritesContext.Provider value={{ favorites, isFavorite, toggleFavorite, importFavorites, mounted }}>
       {children}
     </FavoritesContext.Provider>
   )
