@@ -2,6 +2,7 @@ import type { RawMeal, Meal, MealSummary, Category, Area } from './types'
 import { extractIngredients, parseInstructions, calculateDifficulty, extractSnippet, estimateMealMeta } from './utils'
 import { getSpoonacularMealById, searchSpoonacularByCuisine, searchEverydayRecipes } from './spoonacular'
 import { SPOONACULAR_ONLY_AREAS, spoonacularCuisineFor } from './areas'
+import { fuzzySearchIndex } from './searchIndex'
 
 const BASE_URL = 'https://www.themealdb.com/api/json/v1/1'
 
@@ -114,14 +115,26 @@ export async function getMealsByAreaFull(area: string, limit = INITIAL_BATCH) {
 // Search returns FULL raw meals from /search.php, so we transform them directly
 // instead of re-fetching each by id (avoids an N+1 round-trip that could drop
 // recipes on a flaky network and strip their difficulty/time data).
+//
+// If the literal TheMealDB search comes back empty (typo, near-miss), fall
+// back to the fuzzy name index so a misspelled query still finds something
+// instead of a bare "no results" page.
 export async function searchMealsByNameFull(
   query: string
-): Promise<{ total: number; meals: Meal[]; restIds: string[] }> {
+): Promise<{ total: number; meals: Meal[]; restIds: string[]; fuzzy: boolean }> {
   const data = await apiFetch<{ meals: RawMeal[] | null }>(
     `/search.php?s=${encodeURIComponent(query)}`
   )
-  const meals = (data?.meals ?? []).map(transformMeal)
-  return { total: meals.length, meals, restIds: [] }
+  const rawMeals = data?.meals ?? []
+
+  if (rawMeals.length > 0) {
+    const meals = rawMeals.map(transformMeal)
+    return { total: meals.length, meals, restIds: [], fuzzy: false }
+  }
+
+  const fuzzyMatches = await fuzzySearchIndex(query, 12)
+  const meals = await getMealsByIdsFull(fuzzyMatches.map((m) => m.id))
+  return { total: meals.length, meals, restIds: [], fuzzy: meals.length > 0 }
 }
 
 export async function getAllCategories(): Promise<Category[]> {

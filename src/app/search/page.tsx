@@ -24,8 +24,8 @@ export default async function SearchPage({ searchParams }: Props) {
 
   const raw = query
     ? await searchMealsByNameFull(query)
-    : { total: 0, meals: [], restIds: [] as string[] }
-  const { total, restIds } = raw
+    : { total: 0, meals: [], restIds: [] as string[], fuzzy: false }
+  const { total, restIds, fuzzy } = raw
   const meals = await localizeMealsForList(raw.meals)
 
   return (
@@ -36,13 +36,23 @@ export default async function SearchPage({ searchParams }: Props) {
           <SearchBar defaultValue={query} />
         </div>
         {query && (
-          <p className="text-sm text-gray-500 flex items-center gap-1.5">
-            <Search size={14} />
-            <LocalizedText
-              en={total > 0 ? `${total} result${total !== 1 ? 's' : ''} for "${query}"` : `No results for "${query}"`}
-              zh={total > 0 ? `「${query}」搵到 ${total} 個結果` : `「${query}」搵唔到結果`}
-            />
-          </p>
+          <div className="space-y-1">
+            <p className="text-sm text-gray-500 flex items-center gap-1.5">
+              <Search size={14} />
+              <LocalizedText
+                en={total > 0 ? `${total} result${total !== 1 ? 's' : ''} for "${query}"` : `No results for "${query}"`}
+                zh={total > 0 ? `「${query}」搵到 ${total} 個結果` : `「${query}」搵唔到結果`}
+              />
+            </p>
+            {fuzzy && (
+              <p className="text-xs text-amber-600">
+                <LocalizedText
+                  en={`No exact match — showing close results for "${query}"`}
+                  zh={`搵唔到完全脗合，顯示「${query}」相似結果`}
+                />
+              </p>
+            )}
+          </div>
         )}
       </div>
 

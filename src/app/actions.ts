@@ -4,6 +4,7 @@ import { getMealsByIdsFull, getMealsByCategory, getMealsByArea } from '@/lib/api
 import { searchSpoonacularRecipes } from '@/lib/spoonacular'
 import { localizeMealsForList } from '@/lib/localize'
 import { buildPlan, matchesPlan } from '@/lib/exploreQuery'
+import { fuzzySearchIndex, type IndexEntry } from '@/lib/searchIndex'
 import type { Meal, MealSummary } from '@/lib/types'
 
 // Server action used by "Load more" on browse/search pages to hydrate the next
@@ -12,6 +13,14 @@ import type { Meal, MealSummary } from '@/lib/types'
 export async function loadMoreMeals(ids: string[]): Promise<Meal[]> {
   if (ids.length === 0) return []
   return localizeMealsForList(await getMealsByIdsFull(ids))
+}
+
+// Live-typing suggestions for the search bar. Fuzzy-matched against a cached
+// name index (see searchIndex.ts) — instant and typo-tolerant, no per-keystroke
+// hit against TheMealDB's rate-limited API.
+export async function getSearchSuggestions(query: string): Promise<IndexEntry[]> {
+  if (query.trim().length < 2) return []
+  return fuzzySearchIndex(query, 8)
 }
 
 // How many TheMealDB summaries to hydrate for an Explore query. Kept modest
