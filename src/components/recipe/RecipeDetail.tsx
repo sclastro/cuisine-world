@@ -11,6 +11,7 @@ import { CookingMode } from './CookingMode'
 import { RecipeEstimates } from './RecipeEstimates'
 import { NutritionPanel } from './NutritionPanel'
 import { getYoutubeWatchUrl, getYoutubeEmbedUrl } from '@/lib/utils'
+import { buildRecipeJsonLd } from '@/lib/recipeJsonLd'
 
 interface Props {
   meal: Meal
@@ -27,9 +28,16 @@ const DIFFICULTY_LABELS: Record<string, string> = {
 export function RecipeDetail({ meal }: Props) {
   const youtubeUrl = getYoutubeWatchUrl(meal.youtubeUrl)
   const youtubeEmbed = getYoutubeEmbedUrl(meal.youtubeUrl)
+  const jsonLd = buildRecipeJsonLd(meal)
 
   return (
     <article className="max-w-3xl mx-auto px-4 py-8 space-y-8">
+      {/* Recipe structured data for search engines (rich results: time, servings, calories) */}
+      <script
+        type="application/ld+json"
+        // eslint-disable-next-line react/no-danger
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
 
       {/* Hero image + title */}
       <div className="space-y-4">
