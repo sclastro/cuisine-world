@@ -22,12 +22,17 @@ export function extractIngredients(meal: RawMeal): Ingredient[] {
   return ingredients
 }
 
+// Some TheMealDB entries put step headers like "STEP 1" on their own line
+// before the actual instruction text. We already number steps ourselves when
+// rendering, so a lone header line becomes a bogus empty step — filter it out.
+const STEP_HEADER_RE = /^step\s*\d+\s*[:.]?$/i
+
 export function parseInstructions(raw: string | null): string[] {
   if (!raw) return []
   return raw
     .split(/\r\n|\n/)
     .map((line) => line.trim())
-    .filter((line) => line.length > 0)
+    .filter((line) => line.length > 0 && !STEP_HEADER_RE.test(line))
 }
 
 const COMPLEX_TECHNIQUES = [
