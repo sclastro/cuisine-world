@@ -88,9 +88,12 @@ export default async function HomePage() {
     <div className="max-w-6xl mx-auto px-4 py-10 space-y-16">
 
       {/* ── Hero ──────────────────────────────────────── */}
-      <section className="text-center py-10 space-y-6 animate-fade-up">
+      <section className="relative overflow-hidden text-center py-14 px-4 space-y-6 animate-fade-up rounded-3xl bg-gradient-to-b from-green-50 via-green-50/40 to-transparent dark:from-green-950/40 dark:via-green-950/10 dark:to-transparent border border-green-100/60 dark:border-green-900/40">
+        {/* Soft decorative glow */}
+        <div aria-hidden className="pointer-events-none absolute -top-16 left-1/2 -translate-x-1/2 w-72 h-72 rounded-full bg-green-200/40 dark:bg-green-800/20 blur-3xl" />
+
         {/* Decorative pill */}
-        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-semibold tracking-wide">
+        <span className="relative inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-green-100 dark:bg-green-900/60 text-green-700 dark:text-green-300 text-xs font-semibold tracking-wide">
           <LocalizedText en="🌍 Thousands of recipes · Free forever" zh="🌍 數千份食譜 · 永久免費" />
         </span>
 
