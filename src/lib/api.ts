@@ -5,6 +5,7 @@ import { SPOONACULAR_ONLY_AREAS, spoonacularCuisineFor } from './areas'
 import { fuzzySearchIndex } from './searchIndex'
 import { cleanMeals, isCompleteMeal } from './mealQuality'
 import { getCollection } from './collections'
+import type { PresetMenuDef } from './presetMenus'
 
 const BASE_URL = 'https://www.themealdb.com/api/json/v1/1'
 
@@ -271,6 +272,50 @@ export async function getRandomMeals(count: number): Promise<Meal[]> {
     }
   }
   return distinct
+}
+
+// Deterministic small hash so a preset always resolves to the same dishes.
+function presetSeed(id: string): number {
+  let h = 0
+  for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) & 0x7fffffff
+  return h
+}
+
+const STARTER_CATS = ['Starter', 'Side', 'Breakfast', 'Miscellaneous']
+const MAIN_CATS = ['Beef', 'Chicken', 'Lamb', 'Pork', 'Seafood', 'Pasta', 'Vegetarian']
+
+// Resolves one preset menu into concrete, on-theme dishes for its 4 slots.
+// starter/main come from the menu's cuisine area (picked by category); soup is
+// a real soup dish (search) preferring the same cuisine; dessert is any dessert.
+export async function resolvePresetMenu(def: PresetMenuDef): Promise<{
+  starter: MealSummary | null
+  soup: MealSummary | null
+  main: MealSummary | null
+  dessert: MealSummary | null
+}> {
+  const [areaList, soups, desserts] = await Promise.all([
+    getMealsByArea(def.area),
+    searchMealsByName('soup'),
+    getMealsByCategory('Dessert'),
+  ])
+  const seed = presetSeed(def.id)
+
+  const pick = (list: MealSummary[], offset: number, exclude: string[] = []): MealSummary | null => {
+    const avail = list.filter((m) => !exclude.includes(m.id))
+    return avail.length ? avail[(seed + offset) % avail.length] : null
+  }
+
+  const starterPool = areaList.filter((m) => STARTER_CATS.includes(m.category ?? ''))
+  const mainPool = areaList.filter((m) => MAIN_CATS.includes(m.category ?? ''))
+
+  const starter = pick(starterPool.length ? starterPool : areaList, 0)
+  const main = pick(mainPool.length ? mainPool : areaList, 1, starter ? [starter.id] : [])
+  // Prefer a soup from the same cuisine, else any soup.
+  const areaSoups = soups.filter((m) => (m.area ?? '').toLowerCase() === def.area.toLowerCase())
+  const soup = pick(areaSoups.length ? areaSoups : soups, 2)
+  const dessert = pick(desserts, 3)
+
+  return { starter, soup, main, dessert }
 }
 
 export async function getMealsByIds(ids: string[]): Promise<MealSummary[]> {

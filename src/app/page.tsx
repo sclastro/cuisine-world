@@ -1,14 +1,26 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { ChevronRight, Shuffle, Globe } from 'lucide-react'
-import { getAllCategories, getRandomMeals } from '@/lib/api'
+import { ChevronRight, Shuffle, Globe, Sparkles } from 'lucide-react'
+import { getAllCategories, getRandomMeals, getCollectionMeals } from '@/lib/api'
 import { localizeMealsForList } from '@/lib/localize'
 import { categoryZh } from '@/lib/categories'
 import { getAreaInfo } from '@/lib/areas'
+import { COLLECTIONS, ACCENT_CLASSES } from '@/lib/collections'
 import { LocalizedText } from '@/components/ui/LocalizedText'
 import { RecipeGrid } from '@/components/recipe/RecipeGrid'
 import { SearchBar } from '@/components/search/SearchBar'
 import { EverydayCookingSection } from '@/components/layout/EverydayCookingSection'
+
+export const dynamic = 'force-dynamic'
+
+// Rotate a featured collection by day-of-year so the homepage feels alive on
+// repeat visits without extra API cost.
+function featuredCollectionOfDay() {
+  const now = new Date()
+  const start = new Date(now.getFullYear(), 0, 0)
+  const dayOfYear = Math.floor((now.getTime() - start.getTime()) / 86400000)
+  return COLLECTIONS[dayOfYear % COLLECTIONS.length]
+}
 
 const COURSE_SECTIONS = [
   {
@@ -62,11 +74,15 @@ const COURSE_SECTIONS = [
 ]
 
 export default async function HomePage() {
-  const [randomMeals, categories] = await Promise.all([
-    getRandomMeals(3),
+  const featuredCollection = featuredCollectionOfDay()
+  const [randomMeals, categories, collectionResult] = await Promise.all([
+    getRandomMeals(6),
     getAllCategories(),
+    getCollectionMeals(featuredCollection.id, 4),
   ])
   const featuredMeals = await localizeMealsForList(randomMeals)
+  const collectionMeals = await localizeMealsForList((collectionResult?.meals ?? []).slice(0, 4))
+  const collectionAccent = ACCENT_CLASSES[featuredCollection.accent]
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-10 space-y-16">
@@ -150,6 +166,33 @@ export default async function HomePage() {
           ))}
         </div>
       </section>
+
+      {/* ── Featured Collection of the day ────────────── */}
+      {collectionMeals.length > 0 && (
+        <section className="space-y-5">
+          <div className="flex items-center justify-between gap-3 flex-wrap">
+            <div className="flex items-center gap-2">
+              <div className={`w-7 h-7 rounded-full flex items-center justify-center ${collectionAccent.badge}`}>
+                <Sparkles size={14} />
+              </div>
+              <h2 className="text-xl font-bold text-gray-800">
+                <LocalizedText en="Featured Collection" zh="本日精選合集" />
+                <span className="ml-2 font-normal text-gray-400 text-base">
+                  {featuredCollection.emoji}{' '}
+                  <LocalizedText en={featuredCollection.titleEn} zh={featuredCollection.titleZh} />
+                </span>
+              </h2>
+            </div>
+            <Link
+              href={`/collections/${featuredCollection.id}`}
+              className="text-sm text-green-600 hover:underline flex items-center gap-0.5"
+            >
+              <LocalizedText en="See all" zh="睇晒" /> <ChevronRight size={14} />
+            </Link>
+          </div>
+          <RecipeGrid meals={collectionMeals} showSnippet />
+        </section>
+      )}
 
       {/* ── Everyday Cooking ──────────────────────────── */}
       <EverydayCookingSection />
