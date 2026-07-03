@@ -93,6 +93,11 @@ const STRINGS = {
   'explore.noResults': { en: 'No matches — try fewer or different filters.', zh: '冇符合嘅食譜 — 試下少啲或者唔同嘅選項。' },
   'explore.startHint': { en: 'Pick a few options above, then hit Find Recipes.', zh: '喺上面揀幾個選項，再撳「搵食譜」。' },
 
+  // Personalized homepage rows
+  'home.recent':       { en: 'Recently Viewed',  zh: '最近瀏覽' },
+  'home.recommended':  { en: 'Because You Liked', zh: '為你推薦' },
+  'home.recommendedSub': { en: 'Picked from your favourites', zh: '根據你嘅收藏挑選' },
+
   // Difficulty labels
   'diff.easy':    { en: 'Easy',        zh: '初級' },
   'diff.medEasy': { en: 'Medium-Easy', zh: '初中級' },

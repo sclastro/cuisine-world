@@ -5,6 +5,7 @@ import { FavoritesProvider } from '@/context/FavoritesContext'
 import { LanguageProvider } from '@/context/LanguageContext'
 import { MenuProvider } from '@/context/MenuContext'
 import { ThemeProvider } from '@/context/ThemeContext'
+import { RecentlyViewedProvider } from '@/context/RecentlyViewedContext'
 import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
 
@@ -43,13 +44,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ThemeProvider>
           <LanguageProvider>
             <FavoritesProvider>
-              <MenuProvider>
-                <Header />
-                <main className="min-h-[calc(100vh-4rem)]">
-                  {children}
-                </main>
-                <Footer />
-              </MenuProvider>
+              <RecentlyViewedProvider>
+                <MenuProvider>
+                  <Header />
+                  <main className="min-h-[calc(100vh-4rem)]">
+                    {children}
+                  </main>
+                  <Footer />
+                </MenuProvider>
+              </RecentlyViewedProvider>
             </FavoritesProvider>
           </LanguageProvider>
         </ThemeProvider>

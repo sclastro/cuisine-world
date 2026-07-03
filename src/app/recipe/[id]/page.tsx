@@ -4,6 +4,7 @@ import { getMealById } from '@/lib/api'
 import { localizeMealFull } from '@/lib/localize'
 import { searchCookingVideo } from '@/lib/youtube'
 import { RecipeDetail } from '@/components/recipe/RecipeDetail'
+import { RecordRecentView } from '@/components/recipe/RecordRecentView'
 import { SimilarRecipes } from '@/components/recipe/SimilarRecipes'
 import { SkeletonGrid } from '@/components/ui/SkeletonCard'
 
@@ -44,6 +45,7 @@ export default async function RecipePage({ params }: Props) {
 
   return (
     <>
+      <RecordRecentView mealId={meal.id} />
       <RecipeDetail meal={meal} />
 
       {meal.category && (

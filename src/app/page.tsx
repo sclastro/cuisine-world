@@ -10,6 +10,7 @@ import { LocalizedText } from '@/components/ui/LocalizedText'
 import { RecipeGrid } from '@/components/recipe/RecipeGrid'
 import { SearchBar } from '@/components/search/SearchBar'
 import { EverydayCookingSection } from '@/components/layout/EverydayCookingSection'
+import { PersonalizedRows } from '@/components/home/PersonalizedRows'
 
 export const dynamic = 'force-dynamic'
 
@@ -133,10 +134,13 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* ── Personalized rows (recently viewed + recommendations) ── */}
+      <PersonalizedRows />
+
       {/* ── Browse by Course ──────────────────────────── */}
       <section className="space-y-5">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-bold text-gray-800">
+          <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">
             <LocalizedText en="Browse by Course" zh="按課題瀏覽" />
           </h2>
         </div>

@@ -24,6 +24,55 @@ export async function getSearchSuggestions(query: string): Promise<IndexEntry[]>
   return fuzzySearchIndex(query, 8)
 }
 
+// "Because you liked…" — heuristic recommendations from a user's favorites.
+// Infers their most-favorited categories/areas, pulls related dishes, drops
+// anything already favorited, and returns localized, de-duplicated meals.
+export async function recommendFromFavorites(favoriteIds: string[]): Promise<Meal[]> {
+  if (favoriteIds.length === 0) return []
+
+  const favs = await getMealsByIdsFull(favoriteIds.slice(0, 12))
+  const catCount = new Map<string, number>()
+  const areaCount = new Map<string, number>()
+  for (const m of favs) {
+    if (m.category) catCount.set(m.category, (catCount.get(m.category) ?? 0) + 1)
+    if (m.area) areaCount.set(m.area, (areaCount.get(m.area) ?? 0) + 1)
+  }
+  const top = (map: Map<string, number>, n: number) =>
+    [...map.entries()].sort((a, b) => b[1] - a[1]).slice(0, n).map((e) => e[0])
+
+  const topCats = top(catCount, 2)
+  const topAreas = top(areaCount, 1)
+  if (topCats.length === 0 && topAreas.length === 0) return []
+
+  const lists = await Promise.all([
+    ...topCats.map((c) => getMealsByCategory(c)),
+    ...topAreas.map((a) => getMealsByArea(a)),
+  ])
+
+  const favSet = new Set(favoriteIds)
+  const seen = new Set<string>()
+  const candidateIds: string[] = []
+  let idx = 0
+  let added = true
+  while (added && candidateIds.length < 18) {
+    added = false
+    for (const list of lists) {
+      const item = list[idx]
+      if (item) {
+        added = true
+        if (!favSet.has(item.id) && !seen.has(item.id)) {
+          seen.add(item.id)
+          candidateIds.push(item.id)
+        }
+      }
+    }
+    idx++
+  }
+
+  const meals = cleanMeals(await getMealsByIdsFull(candidateIds.slice(0, 12)))
+  return localizeMealsForList(meals)
+}
+
 // How many TheMealDB summaries to hydrate for an Explore query. Kept modest
 // because each is an individual (rate-limited) lookup; Spoonacular fills the
 // rest richly when a key is present.
