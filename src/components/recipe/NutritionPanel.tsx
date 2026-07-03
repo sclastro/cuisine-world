@@ -9,11 +9,12 @@ interface Props {
 }
 
 // Four-macro nutrition panel shown on the recipe detail page. Spoonacular data
-// is per serving; Open Food Facts data is a per-100g approximation — labelled
-// "estimated" with a source note so users know it's a guide, not exact.
+// is per serving; Open Food Facts is a per-100g approximation; 'estimate' is
+// our own ingredient-based guess. Anything non-Spoonacular is labelled
+// "estimated" with an honest source note.
 export function NutritionPanel({ nutrition }: Props) {
   const t = useT()
-  const approx = nutrition.source === 'openfoodfacts'
+  const approx = nutrition.source !== 'spoonacular'
 
   const tiles = [
     { icon: Flame,   label: t('nutrition.cal'),     value: nutrition.calories, unit: t('nutrition.kcal'), color: 'text-orange-500 bg-orange-50' },
@@ -47,7 +48,9 @@ export function NutritionPanel({ nutrition }: Props) {
         ))}
       </div>
       {approx && (
-        <p className="text-[11px] text-gray-400 dark:text-gray-500">{t('nutrition.source')}</p>
+        <p className="text-[11px] text-gray-400 dark:text-gray-500">
+          {nutrition.source === 'openfoodfacts' ? t('nutrition.source') : t('nutrition.estNote')}
+        </p>
       )}
     </section>
   )

@@ -57,13 +57,14 @@ export interface Ingredient {
 }
 
 // Per-serving macros. `source` distinguishes reliable API data (Spoonacular)
-// from Open Food Facts lookups (per-100g, approximate) so the UI can label it.
+// from Open Food Facts lookups (per-100g, approximate) and our own
+// ingredient-based estimate, so the UI can label each honestly.
 export interface NutritionData {
   calories: number
   protein: number
   fat: number
   carbs: number
-  source: 'spoonacular' | 'openfoodfacts'
+  source: 'spoonacular' | 'openfoodfacts' | 'estimate'
 }
 
 export interface Meal {

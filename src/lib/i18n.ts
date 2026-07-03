@@ -42,6 +42,7 @@ const STRINGS = {
   'nutrition.g':       { en: 'g',        zh: '克' },
   'nutrition.kcal':    { en: 'kcal',     zh: '千卡' },
   'nutrition.source':  { en: 'Source: Open Food Facts', zh: '資料來源：Open Food Facts' },
+  'nutrition.estNote': { en: 'Estimated from ingredients — for reference only', zh: '根據食材估算，僅供參考' },
 
   'sort.name':     { en: 'Name A–Z',      zh: '名稱 A–Z' },
   'sort.diffAsc':  { en: 'Easiest first', zh: '由易到難' },

@@ -3,6 +3,7 @@ import { translateToZh, translateManyToZh } from './translate'
 import { getAreaInfo } from './areas'
 import { categoryZh } from './categories'
 import { getNutrition } from './openFoodFacts'
+import { estimateNutrition } from './nutritionEstimate'
 import { resolveDescription } from './recipeDescriptions'
 
 // Attaches Chinese translations to meals, server-side.
@@ -32,10 +33,12 @@ export async function localizeMealsForList(meals: Meal[]): Promise<Meal[]> {
 
 // Detail view: everything, including ingredients and step-by-step instructions.
 export async function localizeMealFull(meal: Meal): Promise<Meal> {
-  // Spoonacular meals already carry nutrition; for the rest, try Open Food Facts.
+  // Nutrition chain: Spoonacular (already attached) → Open Food Facts lookup →
+  // ingredient-based estimate. Every detail view always gets a value; the
+  // panel labels non-Spoonacular sources as approximate.
   const nutritionPromise = meal.nutrition
     ? Promise.resolve(meal.nutrition)
-    : getNutrition(meal.name)
+    : getNutrition(meal.name).then((n) => n ?? estimateNutrition(meal))
 
   const [nameZh, snippetZh, instructionsZh, ingredientsZh, tagsZh, nutrition] =
     await Promise.all([
