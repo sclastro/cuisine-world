@@ -80,6 +80,16 @@ export async function getMealsByArea(area: string): Promise<MealSummary[]> {
   return (data?.meals ?? []).map(toSummary)
 }
 
+// Meals containing a given main ingredient (TheMealDB filter.php?i=). The API
+// wants underscores for spaces (e.g. "chicken_breast"). Returns id-only-ish
+// summaries (filter.php omits area/category), so callers hydrate before display.
+export async function getMealsByIngredient(ingredient: string): Promise<MealSummary[]> {
+  const param = ingredient.trim().toLowerCase().replace(/\s+/g, '_')
+  if (!param) return []
+  const data = await apiFetch<{ meals: RawMeal[] | null }>(`/filter.php?i=${encodeURIComponent(param)}`)
+  return (data?.meals ?? []).map(toSummary)
+}
+
 // Resolves full Meal objects for a list of ids (so cards/filters have
 // difficulty, estimates, etc.). Used both for the initial batch and "load more".
 export async function getMealsByIdsFull(ids: string[]): Promise<Meal[]> {

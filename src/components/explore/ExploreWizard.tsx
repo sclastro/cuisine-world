@@ -2,7 +2,8 @@
 
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
-import { Search, Sparkles, RotateCcw } from 'lucide-react'
+import Link from 'next/link'
+import { Search, Sparkles, RotateCcw, Refrigerator, ChevronRight } from 'lucide-react'
 import { EXPLORE_OPTIONS, type ExploreDim } from '@/lib/exploreQuery'
 import { exploreRecipes } from '@/app/actions'
 import { useLanguage } from '@/context/LanguageContext'
@@ -67,6 +68,16 @@ export function ExploreWizard({ initialMeals }: Props) {
         <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-50">{t('explore.title')} 🧭</h1>
         <p className="text-gray-400 dark:text-gray-500 text-sm max-w-xl mx-auto">{t('explore.subtitle')}</p>
       </div>
+
+      {/* Entry point to ingredient-based "cook from your fridge" search */}
+      <Link
+        href="/fridge"
+        className="flex items-center justify-center gap-2 rounded-2xl border border-green-200 dark:border-gray-700 bg-green-50 dark:bg-gray-800/60 px-5 py-3 text-sm font-medium text-green-700 dark:text-green-400 hover:bg-green-100 dark:hover:bg-gray-800 transition-colors"
+      >
+        <Refrigerator size={16} />
+        {t('fridge.entry')}
+        <ChevronRight size={15} />
+      </Link>
 
       {/* Filter dimensions */}
       <div className="space-y-5">

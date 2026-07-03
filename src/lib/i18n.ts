@@ -93,6 +93,18 @@ const STRINGS = {
   'explore.noResults': { en: 'No matches — try fewer or different filters.', zh: '冇符合嘅食譜 — 試下少啲或者唔同嘅選項。' },
   'explore.startHint': { en: 'Pick a few options above, then hit Find Recipes.', zh: '喺上面揀幾個選項，再撳「搵食譜」。' },
 
+  // Cook from your fridge
+  'fridge.title':       { en: 'Cook From Your Fridge', zh: '我雪櫃有咩' },
+  'fridge.subtitle':    { en: "Add the ingredients you have — we'll find recipes that use them.", zh: '加入你手上有嘅食材 — 我哋幫你搵到用得着嘅食譜。' },
+  'fridge.placeholder': { en: 'Add an ingredient…', zh: '加入食材…' },
+  'fridge.popular':     { en: 'Popular ingredients', zh: '常見食材' },
+  'fridge.find':        { en: 'Find Recipes',   zh: '搵食譜' },
+  'fridge.finding':     { en: 'Finding…',       zh: '搵緊…' },
+  'fridge.clear':       { en: 'Clear',          zh: '清除' },
+  'fridge.hint':        { en: 'Add a few ingredients above, then hit Find Recipes.', zh: '喺上面加幾樣食材，再撳「搵食譜」。' },
+  'fridge.empty':       { en: 'No recipes matched — try fewer or different ingredients.', zh: '冇食譜脗合 — 試下少啲或者唔同嘅食材。' },
+  'fridge.entry':       { en: 'Got ingredients? Cook from your fridge →', zh: '有食材喺手？睇下雪櫃食譜 →' },
+
   // Personalized homepage rows
   'home.recent':       { en: 'Recently Viewed',  zh: '最近瀏覽' },
   'home.recommended':  { en: 'Because You Liked', zh: '為你推薦' },

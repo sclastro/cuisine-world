@@ -1,6 +1,6 @@
 'use server'
 
-import { getMealsByIdsFull, getMealsByCategory, getMealsByArea } from '@/lib/api'
+import { getMealsByIdsFull, getMealsByCategory, getMealsByArea, getMealsByIngredient } from '@/lib/api'
 import { searchSpoonacularRecipes } from '@/lib/spoonacular'
 import { localizeMealsForList } from '@/lib/localize'
 import { buildPlan, matchesPlan } from '@/lib/exploreQuery'
@@ -70,6 +70,34 @@ export async function recommendFromFavorites(favoriteIds: string[]): Promise<Mea
   }
 
   const meals = cleanMeals(await getMealsByIdsFull(candidateIds.slice(0, 12)))
+  return localizeMealsForList(meals)
+}
+
+// "Cook from your fridge" — find recipes from ingredients the user has.
+// TheMealDB filters by one ingredient at a time, so we fetch each and keep the
+// meals that contain the MOST of the requested ingredients (ranked), which
+// tolerates near-misses instead of demanding an exact all-match.
+export async function searchByIngredients(ingredients: string[]): Promise<Meal[]> {
+  const cleaned = ingredients.map((i) => i.trim()).filter(Boolean).slice(0, 5)
+  if (cleaned.length === 0) return []
+
+  const lists = await Promise.all(cleaned.map((ing) => getMealsByIngredient(ing)))
+
+  // Count how many of the requested ingredients each meal matched.
+  const hitCount = new Map<string, number>()
+  for (const list of lists) {
+    const idsInList = new Set(list.map((m) => m.id))
+    for (const id of idsInList) hitCount.set(id, (hitCount.get(id) ?? 0) + 1)
+  }
+  if (hitCount.size === 0) return []
+
+  // Rank by most ingredients matched, take the top ids to hydrate.
+  const rankedIds = [...hitCount.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 15)
+    .map((e) => e[0])
+
+  const meals = cleanMeals(await getMealsByIdsFull(rankedIds))
   return localizeMealsForList(meals)
 }
 
