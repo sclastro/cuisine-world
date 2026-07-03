@@ -5,6 +5,7 @@ import { searchSpoonacularRecipes } from '@/lib/spoonacular'
 import { localizeMealsForList } from '@/lib/localize'
 import { buildPlan, matchesPlan } from '@/lib/exploreQuery'
 import { fuzzySearchIndex, type IndexEntry } from '@/lib/searchIndex'
+import { cleanMeals } from '@/lib/mealQuality'
 import type { Meal, MealSummary } from '@/lib/types'
 
 // Server action used by "Load more" on browse/search pages to hydrate the next
@@ -69,16 +70,9 @@ export async function exploreRecipes(selectedIds: string[]): Promise<Meal[]> {
   const spoon = (await searchSpoonacularRecipes(plan.spoon, 24))
     .filter((m) => matchesPlan(m, plan))
 
-  // 4. Merge (Spoonacular first for its richer data), de-dupe, cap, localize.
-  const merged: Meal[] = []
-  const mergedIds = new Set<string>()
-  for (const m of [...spoon, ...dbMeals]) {
-    if (!mergedIds.has(m.id)) {
-      mergedIds.add(m.id)
-      merged.push(m)
-      if (merged.length >= EXPLORE_MAX) break
-    }
-  }
+  // 4. Merge (Spoonacular first for its richer data), quality-filter and
+  //    de-dupe by id AND normalized name (cross-source same-dish), cap, localize.
+  const merged = cleanMeals([...spoon, ...dbMeals]).slice(0, EXPLORE_MAX)
 
   return localizeMealsForList(merged)
 }

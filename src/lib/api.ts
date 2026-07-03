@@ -3,6 +3,7 @@ import { extractIngredients, parseInstructions, calculateDifficulty, extractSnip
 import { getSpoonacularMealById, searchSpoonacularByCuisine, searchEverydayRecipes } from './spoonacular'
 import { SPOONACULAR_ONLY_AREAS, spoonacularCuisineFor } from './areas'
 import { fuzzySearchIndex } from './searchIndex'
+import { cleanMeals, isCompleteMeal } from './mealQuality'
 
 const BASE_URL = 'https://www.themealdb.com/api/json/v1/1'
 
@@ -128,12 +129,12 @@ export async function searchMealsByNameFull(
   const rawMeals = data?.meals ?? []
 
   if (rawMeals.length > 0) {
-    const meals = rawMeals.map(transformMeal)
+    const meals = cleanMeals(rawMeals.map(transformMeal))
     return { total: meals.length, meals, restIds: [], fuzzy: false }
   }
 
   const fuzzyMatches = await fuzzySearchIndex(query, 12)
-  const meals = await getMealsByIdsFull(fuzzyMatches.map((m) => m.id))
+  const meals = cleanMeals(await getMealsByIdsFull(fuzzyMatches.map((m) => m.id)))
   return { total: meals.length, meals, restIds: [], fuzzy: meals.length > 0 }
 }
 
@@ -177,10 +178,13 @@ export async function getAreaMealsCombined(
       : Promise.resolve({ total: 0, meals: [] as Meal[] }),
   ])
 
-  // Spoonacular home-cooking first, then TheMealDB's traditional dishes.
-  const meals = [...spoon.meals, ...dbResult.meals]
-  const total = dbResult.total + spoon.meals.length
-  return { total, meals, restIds: dbResult.restIds }
+  // TheMealDB's traditional dishes first (they're the canonical entry for a
+  // region), then Spoonacular's home cooking. cleanMeals drops incomplete
+  // recipes and cross-source duplicates (same dish name from both APIs).
+  const merged = cleanMeals([...dbResult.meals, ...spoon.meals])
+  const removed = dbResult.meals.length + spoon.meals.length - merged.length
+  const total = Math.max(merged.length, dbResult.total + spoon.meals.length - removed)
+  return { total, meals: merged, restIds: dbResult.restIds }
 }
 
 export async function getRandomMeal(): Promise<Meal | null> {
@@ -210,7 +214,7 @@ export async function getRandomMeals(count: number): Promise<Meal[]> {
   const seen = new Set<string>()
   const distinct: Meal[] = []
   for (const meal of results) {
-    if (meal && !seen.has(meal.id)) {
+    if (meal && isCompleteMeal(meal) && !seen.has(meal.id)) {
       seen.add(meal.id)
       distinct.push(meal)
       if (distinct.length === count) break
@@ -245,9 +249,9 @@ const EVERYDAY_SOURCES: Record<
 > = {
   // Quick: lighter courses that tend to be fast; the difficulty filter + the
   // ≤40-min estimate further narrow it to genuinely quick dishes.
-  quick: { categories: ['Breakfast', 'Side', 'Starter', 'Miscellaneous'], spoonacular: 'quick' },
-  asian: { areas: ['Chinese', 'Japanese', 'Thai', 'Malaysian', 'Vietnamese', 'Filipino'] },
-  world: { areas: ['American', 'Italian', 'French', 'Spanish', 'British', 'Greek', 'Mexican'] },
+  quick: { categories: ['Breakfast', 'Side', 'Starter', 'Miscellaneous', 'Pasta'], spoonacular: 'quick' },
+  asian: { areas: ['Chinese', 'Japanese', 'Thai', 'Malaysian', 'Vietnamese', 'Filipino', 'Indian'] },
+  world: { areas: ['American', 'Italian', 'French', 'Spanish', 'British', 'Greek', 'Mexican', 'Portuguese', 'Turkish', 'Moroccan'] },
 }
 
 // Gathers a de-duplicated summary pool for an everyday type from TheMealDB.
@@ -288,9 +292,10 @@ export async function getEverydayMeals(
     meals = meals.filter((m) => m.estTimeMinutes <= 40)
   }
 
-  // Optional Spoonacular bonus (quick = ≤30 min), merged in front when available.
+  // Optional Spoonacular bonus (quick = ≤30 min), merged in front when
+  // available. cleanMeals drops incomplete recipes and cross-source dupes.
   const spoon = await searchEverydayBonus(kind)
-  meals = [...spoon, ...meals]
+  meals = cleanMeals([...spoon, ...meals])
 
   return {
     total: pool.length + spoon.length,
