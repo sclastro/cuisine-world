@@ -4,6 +4,7 @@ import { getSpoonacularMealById, searchSpoonacularByCuisine, searchEverydayRecip
 import { SPOONACULAR_ONLY_AREAS, spoonacularCuisineFor } from './areas'
 import { fuzzySearchIndex } from './searchIndex'
 import { cleanMeals, isCompleteMeal } from './mealQuality'
+import { getCollection } from './collections'
 
 const BASE_URL = 'https://www.themealdb.com/api/json/v1/1'
 
@@ -185,6 +186,55 @@ export async function getAreaMealsCombined(
   const removed = dbResult.meals.length + spoon.meals.length - merged.length
   const total = Math.max(merged.length, dbResult.total + spoon.meals.length - removed)
   return { total, meals: merged, restIds: dbResult.restIds }
+}
+
+// Round-robin interleave several summary lists into one de-duplicated pool, so
+// a hydrated batch spans all sources instead of exhausting the first category.
+function interleaveSummaries(lists: MealSummary[][]): MealSummary[] {
+  const seen = new Set<string>()
+  const pool: MealSummary[] = []
+  let idx = 0
+  let added = true
+  while (added) {
+    added = false
+    for (const list of lists) {
+      const item = list[idx]
+      if (item) {
+        added = true
+        if (!seen.has(item.id)) {
+          seen.add(item.id)
+          pool.push(item)
+        }
+      }
+    }
+    idx++
+  }
+  return pool
+}
+
+// Resolves a curated collection (see collections.ts) into a browse-ready result.
+// Builds a pool from the collection's categories/areas, hydrates a capped batch
+// (a bit larger when a maxTime filter will trim it), quality-filters + dedupes,
+// and returns the remainder as restIds for "load more".
+export async function getCollectionMeals(
+  id: string,
+  limit = INITIAL_BATCH
+): Promise<{ total: number; meals: Meal[]; restIds: string[] } | null> {
+  const def = getCollection(id)
+  if (!def) return null
+
+  const lists = await Promise.all([
+    ...(def.categories ?? []).map((c) => getMealsByCategory(c)),
+    ...(def.areas ?? []).map((a) => getMealsByArea(a)),
+  ])
+  const pool = interleaveSummaries(lists)
+
+  const hydrateCount = def.maxTime ? limit + 10 : limit
+  let meals = await getMealsByIdsFull(pool.slice(0, hydrateCount).map((s) => s.id))
+  if (def.maxTime) meals = meals.filter((m) => m.estTimeMinutes <= def.maxTime!)
+  meals = cleanMeals(meals)
+
+  return { total: pool.length, meals, restIds: pool.slice(hydrateCount).map((s) => s.id) }
 }
 
 export async function getRandomMeal(): Promise<Meal | null> {

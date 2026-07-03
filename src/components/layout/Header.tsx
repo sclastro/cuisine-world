@@ -10,14 +10,14 @@ import { useLanguage } from '@/context/LanguageContext'
 import { cn } from '@/lib/utils'
 
 const NAV_LABELS: Record<string, { en: string; zh: string }> = {
-  explore:   { en: 'Explore',      zh: '探索' },
-  starters:  { en: 'Starters',     zh: '前菜' },
-  everyday:  { en: 'Home Cooking', zh: '家常菜' },
-  mains:     { en: 'Mains',        zh: '主菜' },
-  desserts:  { en: 'Desserts',     zh: '甜品' },
-  regions:   { en: 'Regions',      zh: '地區' },
-  favorites: { en: 'Favorites',    zh: '收藏' },
-  menu:      { en: 'My Menu',      zh: '我的菜單' },
+  explore:     { en: 'Explore',      zh: '探索' },
+  collections: { en: 'Collections',  zh: '合集' },
+  everyday:    { en: 'Home Cooking', zh: '家常菜' },
+  mains:       { en: 'Mains',        zh: '主菜' },
+  desserts:    { en: 'Desserts',     zh: '甜品' },
+  regions:     { en: 'Regions',      zh: '地區' },
+  favorites:   { en: 'Favorites',    zh: '收藏' },
+  menu:        { en: 'My Menu',      zh: '我的菜單' },
 }
 
 export function Header() {
@@ -37,7 +37,7 @@ export function Header() {
 
   const navLinks = [
     { href: '/explore',          label: label('explore') },
-    { href: '/category/Starter', label: label('starters') },
+    { href: '/collections',      label: label('collections') },
     { href: '/everyday',         label: label('everyday') },
     { href: '/category/Beef',    label: label('mains') },
     { href: '/category/Dessert', label: label('desserts') },
