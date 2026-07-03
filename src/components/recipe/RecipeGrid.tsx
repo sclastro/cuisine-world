@@ -1,5 +1,6 @@
 import type { Meal, MealSummary } from '@/lib/types'
 import { RecipeCard } from './RecipeCard'
+import { EmptyState } from '@/components/ui/EmptyState'
 
 interface Props {
   meals: (Meal | MealSummary)[]
@@ -9,9 +10,7 @@ interface Props {
 
 export function RecipeGrid({ meals, emptyMessage = 'No recipes found.', showSnippet = false }: Props) {
   if (meals.length === 0) {
-    return (
-      <p className="text-center text-gray-400 py-16">{emptyMessage}</p>
-    )
+    return <EmptyState message={emptyMessage} />
   }
 
   return (

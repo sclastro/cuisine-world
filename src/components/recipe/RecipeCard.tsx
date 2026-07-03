@@ -1,9 +1,9 @@
-import Image from 'next/image'
 import Link from 'next/link'
 import type { MealSummary, DifficultyScore } from '@/lib/types'
 import { DifficultyStars } from '@/components/ui/DifficultyStars'
 import { FavoriteButton } from '@/components/favorites/FavoriteButton'
 import { LocalizedText } from '@/components/ui/LocalizedText'
+import { RecipeImage } from '@/components/ui/RecipeImage'
 import { RecipeCardMeta } from './RecipeCardMeta'
 
 interface Props {
@@ -36,7 +36,7 @@ export function RecipeCard({
     >
       {/* Thumbnail */}
       <div className="relative aspect-square overflow-hidden bg-green-50 img-zoom">
-        <Image
+        <RecipeImage
           src={meal.thumbnail}
           alt={meal.name}
           fill

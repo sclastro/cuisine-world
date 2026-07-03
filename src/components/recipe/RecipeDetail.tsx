@@ -1,4 +1,3 @@
-import Image from 'next/image'
 import Link from 'next/link'
 import { ExternalLink, Tag, MapPin, UtensilsCrossed, PlayCircle } from 'lucide-react'
 import type { Meal } from '@/lib/types'
@@ -6,6 +5,7 @@ import { DifficultyStars } from '@/components/ui/DifficultyStars'
 import { FavoriteButton } from '@/components/favorites/FavoriteButton'
 import { AddToMenuButton } from '@/components/menu/AddToMenuButton'
 import { LocalizedText } from '@/components/ui/LocalizedText'
+import { RecipeImage } from '@/components/ui/RecipeImage'
 import { IngredientList } from './IngredientList'
 import { CookingMode } from './CookingMode'
 import { RecipeEstimates } from './RecipeEstimates'
@@ -42,7 +42,7 @@ export function RecipeDetail({ meal }: Props) {
       {/* Hero image + title */}
       <div className="space-y-4">
         <div className="relative w-full aspect-video rounded-2xl overflow-hidden bg-green-50 shadow-sm">
-          <Image
+          <RecipeImage
             src={meal.thumbnail}
             alt={meal.name}
             fill

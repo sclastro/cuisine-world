@@ -1,8 +1,8 @@
 'use client'
 
-import Image from 'next/image'
 import Link from 'next/link'
 import { Plus, X } from 'lucide-react'
+import { RecipeImage } from '@/components/ui/RecipeImage'
 import type { MealSummary, CourseType } from '@/lib/types'
 import { useMenu } from '@/context/MenuContext'
 import { useLanguage } from '@/context/LanguageContext'
@@ -81,7 +81,7 @@ export function MenuSlot({ course }: Props) {
     <div className="relative rounded-2xl overflow-hidden bg-white border border-green-100 shadow-sm group">
       {/* Meal image */}
       <div className="relative aspect-video">
-        <Image
+        <RecipeImage
           src={meal.thumbnail}
           alt={meal.name}
           fill
