@@ -64,15 +64,15 @@ export function ExploreWizard({ initialMeals }: Props) {
     <div className="max-w-5xl mx-auto px-4 py-8 space-y-8">
       {/* Header */}
       <div className="text-center space-y-2">
-        <h1 className="text-3xl font-bold text-gray-900">{t('explore.title')} 🧭</h1>
-        <p className="text-gray-400 text-sm max-w-xl mx-auto">{t('explore.subtitle')}</p>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-50">{t('explore.title')} 🧭</h1>
+        <p className="text-gray-400 dark:text-gray-500 text-sm max-w-xl mx-auto">{t('explore.subtitle')}</p>
       </div>
 
       {/* Filter dimensions */}
       <div className="space-y-5">
         {DIMENSIONS.map(({ key, labelKey }) => (
           <div key={key} className="space-y-2">
-            <h2 className="text-xs font-semibold uppercase tracking-wide text-gray-400">
+            <h2 className="text-xs font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500">
               {t(labelKey)}
             </h2>
             <div className="flex flex-wrap gap-2">
@@ -86,7 +86,7 @@ export function ExploreWizard({ initialMeals }: Props) {
                       'flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-sm border transition-colors',
                       active
                         ? 'bg-green-600 text-white border-green-600 shadow-sm'
-                        : 'bg-white text-gray-600 border-green-100 hover:border-green-400 hover:bg-green-50'
+                        : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border-green-100 dark:border-gray-700 hover:border-green-400 hover:bg-green-50 dark:hover:bg-gray-700'
                     )}
                   >
                     <span>{o.emoji}</span>

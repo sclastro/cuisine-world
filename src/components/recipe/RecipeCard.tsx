@@ -32,10 +32,10 @@ export function RecipeCard({
   return (
     <Link
       href={`/recipe/${meal.id}`}
-      className="group relative flex flex-col rounded-2xl overflow-hidden bg-white border border-green-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-250"
+      className="group relative flex flex-col rounded-2xl overflow-hidden bg-white dark:bg-gray-900 border border-green-100 dark:border-gray-800 shadow-sm hover:shadow-xl dark:hover:shadow-black/40 hover:-translate-y-1 transition-all duration-250"
     >
       {/* Thumbnail */}
-      <div className="relative aspect-square overflow-hidden bg-green-50 img-zoom">
+      <div className="relative aspect-square overflow-hidden bg-green-50 dark:bg-gray-800 img-zoom">
         <RecipeImage
           src={meal.thumbnail}
           alt={meal.name}
@@ -55,24 +55,24 @@ export function RecipeCard({
 
       {/* Info */}
       <div className="p-3 flex flex-col gap-1.5">
-        <h3 className="text-sm font-semibold text-gray-800 line-clamp-2 leading-snug">
+        <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-100 line-clamp-2 leading-snug">
           <LocalizedText en={meal.name} zh={nameZh} />
         </h3>
 
         {blurb && (
-          <p className="text-[11px] text-gray-400 line-clamp-2 leading-relaxed">
+          <p className="text-[11px] text-gray-400 dark:text-gray-500 line-clamp-2 leading-relaxed">
             <LocalizedText en={blurb} zh={blurbZh} />
           </p>
         )}
 
         <div className="flex flex-wrap gap-1">
           {meal.area && (
-            <span className="text-[11px] px-2 py-0.5 rounded-full bg-green-50 text-green-700 border border-green-100">
+            <span className="text-[11px] px-2 py-0.5 rounded-full bg-green-50 dark:bg-green-950/50 text-green-700 dark:text-green-400 border border-green-100 dark:border-green-900">
               <LocalizedText en={meal.area} zh={areaZh} />
             </span>
           )}
           {meal.category && (
-            <span className="text-[11px] px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-100">
+            <span className="text-[11px] px-2 py-0.5 rounded-full bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-400 border border-amber-100 dark:border-amber-900">
               <LocalizedText en={meal.category} zh={categoryZh} />
             </span>
           )}

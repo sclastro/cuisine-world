@@ -65,10 +65,10 @@ function MenuBuilderInner({ presetsWithMeals }: Props) {
 
       {/* Page header */}
       <div className="text-center space-y-2">
-        <h1 className="text-3xl font-bold text-gray-900">
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-50">
           {t('menu.buildTitle')} 🍽️
         </h1>
-        <p className="text-gray-400 text-sm">
+        <p className="text-gray-400 dark:text-gray-500 text-sm">
           {t('menu.buildSubtitle')}
         </p>
       </div>
@@ -76,13 +76,13 @@ function MenuBuilderInner({ presetsWithMeals }: Props) {
       {/* Menu name + actions */}
       <div className="flex items-center justify-between gap-3 flex-wrap">
         <div className="flex items-center gap-2">
-          <span className="text-sm text-gray-400 font-medium">{t('menu.label')}</span>
+          <span className="text-sm text-gray-400 dark:text-gray-500 font-medium">{t('menu.label')}</span>
           {mounted ? (
-            <span className="text-sm font-semibold text-gray-800 bg-green-50 px-3 py-1 rounded-full border border-green-100">
+            <span className="text-sm font-semibold text-gray-800 dark:text-gray-100 bg-green-50 dark:bg-gray-800 px-3 py-1 rounded-full border border-green-100 dark:border-gray-700">
               {menu.name}
             </span>
           ) : (
-            <div className="w-24 h-6 bg-gray-100 rounded-full animate-pulse" />
+            <div className="w-24 h-6 bg-gray-100 dark:bg-gray-800 rounded-full animate-pulse" />
           )}
         </div>
         <div className="flex items-center gap-2">
@@ -119,8 +119,8 @@ function MenuBuilderInner({ presetsWithMeals }: Props) {
       {/* Preset menus */}
       <section className="space-y-4">
         <div className="text-center space-y-1">
-          <h2 className="text-lg font-bold text-gray-800">{t('menu.inspireTitle')}</h2>
-          <p className="text-sm text-gray-400">
+          <h2 className="text-lg font-bold text-gray-800 dark:text-gray-100">{t('menu.inspireTitle')}</h2>
+          <p className="text-sm text-gray-400 dark:text-gray-500">
             {t('menu.inspireSubtitle')}
           </p>
         </div>

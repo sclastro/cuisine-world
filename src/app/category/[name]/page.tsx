@@ -47,10 +47,10 @@ export default async function CategoryPage({ params }: Props) {
     <div className="max-w-6xl mx-auto px-4 py-8 space-y-6">
       {/* Header */}
       <div className="space-y-1">
-        <h1 className="text-2xl font-bold text-gray-800">
+        <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
           <LocalizedText en={`${category} Recipes`} zh={`${categoryZh(category)}食譜`} />
         </h1>
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-gray-500 dark:text-gray-400">
           <LocalizedText en={`${total} recipes found`} zh={`共 ${total} 道食譜`} />
         </p>
       </div>

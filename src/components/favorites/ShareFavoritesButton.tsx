@@ -27,7 +27,7 @@ export function ShareFavoritesButton() {
   return (
     <button
       onClick={handleShare}
-      className="flex items-center gap-2 px-4 py-2 rounded-full border border-green-200 bg-white text-sm font-medium text-green-700 hover:bg-green-50 hover:border-green-400 transition-colors shadow-sm"
+      className="flex items-center gap-2 px-4 py-2 rounded-full border border-green-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm font-medium text-green-700 dark:text-green-400 hover:bg-green-50 dark:hover:bg-gray-700 hover:border-green-400 transition-colors shadow-sm"
     >
       {copied ? <Check size={15} className="text-green-600" /> : <Share2 size={15} />}
       {copied ? t('fav.linkCopied') : t('fav.share')}

@@ -24,30 +24,30 @@ export function NutritionPanel({ nutrition }: Props) {
 
   return (
     <section className="space-y-3">
-      <h2 className="text-lg font-bold text-gray-800 flex items-center gap-2">
+      <h2 className="text-lg font-bold text-gray-800 dark:text-gray-100 flex items-center gap-2">
         <Flame size={18} className="text-orange-500" />
         {t('nutrition.title')}
         {approx && (
-          <span className="text-xs font-normal text-gray-400">({t('nutrition.est')})</span>
+          <span className="text-xs font-normal text-gray-400 dark:text-gray-500">({t('nutrition.est')})</span>
         )}
       </h2>
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
         {tiles.map(({ icon: Icon, label, value, unit, color }) => (
           <div
             key={label}
-            className="flex flex-col items-center gap-1 rounded-xl border border-gray-100 bg-white p-3 shadow-sm"
+            className="flex flex-col items-center gap-1 rounded-xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 p-3 shadow-sm"
           >
             <span className={`flex items-center justify-center w-8 h-8 rounded-full ${color}`}>
               <Icon size={16} />
             </span>
-            <span className="text-lg font-bold text-gray-800">{value}</span>
-            <span className="text-[11px] text-gray-400">{unit}</span>
-            <span className="text-xs font-medium text-gray-500">{label}</span>
+            <span className="text-lg font-bold text-gray-800 dark:text-gray-100">{value}</span>
+            <span className="text-[11px] text-gray-400 dark:text-gray-500">{unit}</span>
+            <span className="text-xs font-medium text-gray-500 dark:text-gray-400">{label}</span>
           </div>
         ))}
       </div>
       {approx && (
-        <p className="text-[11px] text-gray-400">{t('nutrition.source')}</p>
+        <p className="text-[11px] text-gray-400 dark:text-gray-500">{t('nutrition.source')}</p>
       )}
     </section>
   )

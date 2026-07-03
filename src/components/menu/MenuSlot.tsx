@@ -78,7 +78,7 @@ export function MenuSlot({ course }: Props) {
   }
 
   return (
-    <div className="relative rounded-2xl overflow-hidden bg-white border border-green-100 shadow-sm group">
+    <div className="relative rounded-2xl overflow-hidden bg-white dark:bg-gray-900 border border-green-100 dark:border-gray-800 shadow-sm group">
       {/* Meal image */}
       <div className="relative aspect-video">
         <RecipeImage
@@ -109,7 +109,7 @@ export function MenuSlot({ course }: Props) {
       <div className="p-3 space-y-1">
         <Link
           href={`/recipe/${meal.id}`}
-          className="block text-sm font-semibold text-gray-800 hover:text-green-700 line-clamp-1 transition-colors"
+          className="block text-sm font-semibold text-gray-800 dark:text-gray-100 hover:text-green-700 dark:hover:text-green-400 line-clamp-1 transition-colors"
         >
           {meal.name}
         </Link>

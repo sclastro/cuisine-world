@@ -27,7 +27,7 @@ export function FilterChips({ chips, activeHref, titleEn, titleZh }: Props) {
   return (
     <div className="space-y-2">
       {titleEn && (
-        <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">
+        <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">
           {zh && titleZh ? titleZh : titleEn}
         </p>
       )}
@@ -40,7 +40,7 @@ export function FilterChips({ chips, activeHref, titleEn, titleZh }: Props) {
               'shrink-0 px-3 py-1.5 rounded-full text-sm border transition-colors shadow-sm',
               chip.href === activeHref
                 ? 'bg-green-600 text-white border-green-600 shadow-green-200'
-                : 'bg-white text-gray-700 border-green-100 hover:border-green-400 hover:bg-green-50'
+                : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border-green-100 dark:border-gray-700 hover:border-green-400 hover:bg-green-50 dark:hover:bg-gray-700'
             )}
           >
             {chip.prefix ? `${chip.prefix} ` : ''}

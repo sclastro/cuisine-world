@@ -94,7 +94,7 @@ export default async function HomePage() {
           <LocalizedText en="🌍 Thousands of recipes · Free forever" zh="🌍 數千份食譜 · 永久免費" />
         </span>
 
-        <h1 className="text-4xl sm:text-5xl font-extrabold text-gray-900 leading-tight tracking-tight">
+        <h1 className="text-4xl sm:text-5xl font-extrabold text-gray-900 dark:text-gray-50 leading-tight tracking-tight">
           <LocalizedText
             en="Explore the World's"
             zh="探索世界各地"
@@ -122,7 +122,7 @@ export default async function HomePage() {
             <Link
               key={area}
               href={`/area/${area}`}
-              className="shrink-0 px-3 py-1 rounded-full bg-white border border-gray-200 text-xs text-gray-500 hover:border-green-400 hover:text-green-700 transition-colors"
+              className="shrink-0 px-3 py-1 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-xs text-gray-500 dark:text-gray-300 hover:border-green-400 hover:text-green-700 dark:hover:text-green-400 transition-colors"
             >
               <LocalizedText en={area} zh={getAreaInfo(area).nameZh} />
             </Link>
@@ -175,7 +175,7 @@ export default async function HomePage() {
               <div className={`w-7 h-7 rounded-full flex items-center justify-center ${collectionAccent.badge}`}>
                 <Sparkles size={14} />
               </div>
-              <h2 className="text-xl font-bold text-gray-800">
+              <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">
                 <LocalizedText en="Featured Collection" zh="本日精選合集" />
                 <span className="ml-2 font-normal text-gray-400 text-base">
                   {featuredCollection.emoji}{' '}
@@ -204,11 +204,11 @@ export default async function HomePage() {
             <div className="w-7 h-7 rounded-full bg-green-100 flex items-center justify-center">
               <Shuffle size={14} className="text-green-600" />
             </div>
-            <h2 className="text-xl font-bold text-gray-800">
+            <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">
               <LocalizedText en="Today's Picks" zh="今日精選" />
             </h2>
           </div>
-          <span className="text-xs text-gray-400 bg-gray-100 px-2.5 py-1 rounded-full">
+          <span className="text-xs text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-800 px-2.5 py-1 rounded-full">
             <LocalizedText en="Refreshed daily" zh="每日更新" />
           </span>
         </div>
@@ -255,7 +255,7 @@ export default async function HomePage() {
             <Link
               key={cat.id}
               href={`/category/${encodeURIComponent(cat.name)}`}
-              className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-green-100 hover:border-green-400 hover:bg-green-50 transition-colors text-sm text-gray-700 shadow-sm"
+              className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white dark:bg-gray-800 border border-green-100 dark:border-gray-700 hover:border-green-400 hover:bg-green-50 dark:hover:bg-gray-700 transition-colors text-sm text-gray-700 dark:text-gray-200 shadow-sm"
             >
               <Image
                 src={cat.thumbnail}

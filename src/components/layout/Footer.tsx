@@ -3,11 +3,11 @@ import { UtensilsCrossed } from 'lucide-react'
 
 export function Footer() {
   return (
-    <footer className="border-t border-green-100 bg-white mt-16">
-      <div className="max-w-6xl mx-auto px-4 py-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-gray-500">
+    <footer className="border-t border-green-100 dark:border-gray-800 bg-white dark:bg-gray-900 mt-16">
+      <div className="max-w-6xl mx-auto px-4 py-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-gray-500 dark:text-gray-400">
         <div className="flex items-center gap-2">
-          <UtensilsCrossed size={18} className="text-green-600" />
-          <span className="font-semibold text-green-800">Cuisine World</span>
+          <UtensilsCrossed size={18} className="text-green-600 dark:text-green-400" />
+          <span className="font-semibold text-green-800 dark:text-green-300">Cuisine World</span>
         </div>
         <p>
           Recipe data provided by{' '}

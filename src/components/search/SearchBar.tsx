@@ -105,8 +105,8 @@ export function SearchBar({ compact = false, defaultValue = '' }: Props) {
     <div ref={containerRef} className="relative w-full">
       <form onSubmit={handleSubmit} className="w-full" role="search">
         <div className={cn(
-          'flex items-center gap-2 rounded-full border border-green-200 bg-green-50',
-          'focus-within:border-green-400 focus-within:bg-white transition-colors',
+          'flex items-center gap-2 rounded-full border border-green-200 dark:border-gray-700 bg-green-50 dark:bg-gray-800',
+          'focus-within:border-green-400 focus-within:bg-white dark:focus-within:bg-gray-800 transition-colors',
           compact ? 'px-3 py-1.5' : 'px-4 py-2.5'
         )}>
           <Search size={compact ? 15 : 18} className="text-green-500 shrink-0" />
@@ -123,7 +123,7 @@ export function SearchBar({ compact = false, defaultValue = '' }: Props) {
             aria-controls="search-suggestions"
             aria-autocomplete="list"
             className={cn(
-              'flex-1 bg-transparent outline-none text-gray-700 placeholder:text-gray-400',
+              'flex-1 bg-transparent outline-none text-gray-700 dark:text-gray-200 placeholder:text-gray-400 dark:placeholder:text-gray-500',
               compact ? 'text-sm' : 'text-base'
             )}
           />
@@ -134,7 +134,7 @@ export function SearchBar({ compact = false, defaultValue = '' }: Props) {
         <ul
           id="search-suggestions"
           role="listbox"
-          className="absolute left-0 right-0 top-full mt-2 max-h-80 overflow-y-auto rounded-2xl border border-green-100 bg-white shadow-lg z-50 py-1.5"
+          className="absolute left-0 right-0 top-full mt-2 max-h-80 overflow-y-auto rounded-2xl border border-green-100 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-lg z-50 py-1.5"
         >
           {suggestions.map((s, i) => (
             <li
@@ -145,10 +145,10 @@ export function SearchBar({ compact = false, defaultValue = '' }: Props) {
               onMouseEnter={() => setActiveIndex(i)}
               className={cn(
                 'flex items-center gap-2.5 px-3 py-2 cursor-pointer text-sm',
-                i === activeIndex ? 'bg-green-50 text-green-800' : 'text-gray-700 hover:bg-green-50'
+                i === activeIndex ? 'bg-green-50 dark:bg-gray-800 text-green-800 dark:text-green-300' : 'text-gray-700 dark:text-gray-300 hover:bg-green-50 dark:hover:bg-gray-800'
               )}
             >
-              <div className="relative w-8 h-8 rounded-lg overflow-hidden shrink-0 bg-green-50">
+              <div className="relative w-8 h-8 rounded-lg overflow-hidden shrink-0 bg-green-50 dark:bg-gray-800">
                 <Image src={s.thumbnail} alt={s.name} fill sizes="32px" className="object-cover" />
               </div>
               <span className="truncate">{s.name}</span>

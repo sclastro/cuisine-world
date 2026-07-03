@@ -42,7 +42,7 @@ export function AddToMenuButton({ meal }: Props) {
     <div ref={ref} className="relative">
       <button
         onClick={() => setOpen((v) => !v)}
-        className="flex items-center gap-2 px-4 py-2 rounded-full border border-green-200 bg-white text-sm font-medium text-green-700 hover:bg-green-50 hover:border-green-400 transition-colors shadow-sm"
+        className="flex items-center gap-2 px-4 py-2 rounded-full border border-green-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm font-medium text-green-700 dark:text-green-400 hover:bg-green-50 dark:hover:bg-gray-700 hover:border-green-400 transition-colors shadow-sm"
       >
         <BookMarked size={15} />
         {lang === 'zh' ? '加入菜單' : 'Add to Menu'}
@@ -50,8 +50,8 @@ export function AddToMenuButton({ meal }: Props) {
       </button>
 
       {open && (
-        <div className="absolute left-0 top-full mt-2 w-48 bg-white rounded-2xl shadow-lg border border-green-100 py-2 z-50 overflow-hidden">
-          <p className="text-[11px] text-gray-400 font-semibold uppercase tracking-wide px-3 pb-1.5">
+        <div className="absolute left-0 top-full mt-2 w-48 bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-green-100 dark:border-gray-700 py-2 z-50 overflow-hidden">
+          <p className="text-[11px] text-gray-400 dark:text-gray-500 font-semibold uppercase tracking-wide px-3 pb-1.5">
             {lang === 'zh' ? '選擇課題' : 'Choose a course'}
           </p>
           {COURSES.map(({ key, label, labelZh, emoji }) => {
@@ -61,8 +61,8 @@ export function AddToMenuButton({ meal }: Props) {
                 key={key}
                 onClick={() => handleSelect(key)}
                 className={cn(
-                  'w-full flex items-center gap-2.5 px-3 py-2 text-sm hover:bg-green-50 transition-colors',
-                  alreadySet && 'text-green-600 font-medium'
+                  'w-full flex items-center gap-2.5 px-3 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-green-50 dark:hover:bg-gray-700 transition-colors',
+                  alreadySet && 'text-green-600 dark:text-green-400 font-medium'
                 )}
               >
                 <span>{emoji}</span>

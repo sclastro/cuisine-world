@@ -62,8 +62,8 @@ function FavoritesViewInner() {
           <Heart size={36} className="text-red-300" />
         </div>
         <div className="space-y-2">
-          <h1 className="text-xl font-bold text-gray-700">{t('fav.emptyTitle')}</h1>
-          <p className="text-gray-400 text-sm leading-relaxed">
+          <h1 className="text-xl font-bold text-gray-700 dark:text-gray-200">{t('fav.emptyTitle')}</h1>
+          <p className="text-gray-400 dark:text-gray-500 text-sm leading-relaxed">
             {t('fav.emptyDesc')}
           </p>
         </div>
@@ -86,8 +86,8 @@ function FavoritesViewInner() {
             <Heart size={18} className="fill-red-400 text-red-400" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-gray-800">{t('fav.title')}</h1>
-            <p className="text-sm text-gray-400">
+            <h1 className="text-xl font-bold text-gray-800 dark:text-gray-100">{t('fav.title')}</h1>
+            <p className="text-sm text-gray-400 dark:text-gray-500">
               {meals.length} {t('fav.saved')}
             </p>
           </div>

@@ -56,7 +56,7 @@ export function RecipeDetail({ meal }: Props) {
         </div>
 
         <div className="space-y-3">
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-50">
             <LocalizedText en={meal.name} zh={meal.nameZh} />
           </h1>
 
@@ -65,7 +65,7 @@ export function RecipeDetail({ meal }: Props) {
             {meal.area && (
               <Link
                 href={`/area/${encodeURIComponent(meal.area)}`}
-                className="flex items-center gap-1 text-green-700 hover:underline"
+                className="flex items-center gap-1 text-green-700 dark:text-green-400 hover:underline"
               >
                 <MapPin size={14} />
                 <LocalizedText en={meal.area} zh={meal.areaZh} />
@@ -74,18 +74,18 @@ export function RecipeDetail({ meal }: Props) {
             {meal.category && (
               <Link
                 href={`/category/${encodeURIComponent(meal.category)}`}
-                className="flex items-center gap-1 text-amber-700 hover:underline"
+                className="flex items-center gap-1 text-amber-700 dark:text-amber-400 hover:underline"
               >
                 <UtensilsCrossed size={14} />
                 <LocalizedText en={meal.category} zh={meal.categoryZh} />
               </Link>
             )}
-            <div className="flex items-center gap-1.5 text-gray-500">
+            <div className="flex items-center gap-1.5 text-gray-500 dark:text-gray-400">
               <DifficultyStars difficulty={meal.difficulty} size="md" />
               <span className="text-xs">
                 {meal.difficulty.label}
                 {' '}
-                <span className="text-gray-400">/ {DIFFICULTY_LABELS[meal.difficulty.label]}</span>
+                <span className="text-gray-400 dark:text-gray-500">/ {DIFFICULTY_LABELS[meal.difficulty.label]}</span>
               </span>
             </div>
 
@@ -110,7 +110,7 @@ export function RecipeDetail({ meal }: Props) {
               {meal.tags.map((tag, idx) => (
                 <span
                   key={tag}
-                  className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-gray-100 text-gray-500 text-xs"
+                  className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 text-xs"
                 >
                   <Tag size={10} />
                   <LocalizedText en={tag} zh={meal.tagsZh?.[idx]} />
@@ -123,32 +123,32 @@ export function RecipeDetail({ meal }: Props) {
 
       {/* Appealing intro blurb */}
       {meal.description && (
-        <p className="text-[15px] leading-relaxed text-gray-600 border-l-4 border-green-200 pl-4 italic">
+        <p className="text-[15px] leading-relaxed text-gray-600 dark:text-gray-300 border-l-4 border-green-200 dark:border-green-800 pl-4 italic">
           <LocalizedText en={meal.description} zh={meal.descriptionZh} />
         </p>
       )}
 
       {/* Ingredients */}
       <section className="space-y-3">
-        <h2 className="text-lg font-bold text-gray-800">
+        <h2 className="text-lg font-bold text-gray-800 dark:text-gray-100">
           <LocalizedText en="Ingredients" zh="食材" />
-          <span className="ml-2 text-sm font-normal text-gray-400">({meal.ingredients.length})</span>
+          <span className="ml-2 text-sm font-normal text-gray-400 dark:text-gray-500">({meal.ingredients.length})</span>
         </h2>
         <IngredientList ingredients={meal.ingredients} namesZh={meal.ingredientsZh} />
       </section>
 
       {/* Instructions */}
       <section className="space-y-3">
-        <h2 className="text-lg font-bold text-gray-800">
+        <h2 className="text-lg font-bold text-gray-800 dark:text-gray-100">
           <LocalizedText en="Instructions" zh="烹飪步驟" />
         </h2>
         <ol className="space-y-3">
           {meal.instructions.map((step, i) => (
             <li key={i} className="flex gap-3">
-              <span className="shrink-0 w-6 h-6 rounded-full bg-green-100 text-green-700 text-xs font-bold flex items-center justify-center mt-0.5">
+              <span className="shrink-0 w-6 h-6 rounded-full bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 text-xs font-bold flex items-center justify-center mt-0.5">
                 {i + 1}
               </span>
-              <p className="text-gray-700 text-sm leading-relaxed">
+              <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
                 <LocalizedText en={step} zh={meal.instructionsZh?.[i]} />
               </p>
             </li>
@@ -159,7 +159,7 @@ export function RecipeDetail({ meal }: Props) {
       {/* Watch on YouTube — embedded player + link (shown whenever a video exists) */}
       {youtubeEmbed && (
         <section className="space-y-2">
-          <h2 className="text-lg font-bold text-gray-800 flex items-center gap-2">
+          <h2 className="text-lg font-bold text-gray-800 dark:text-gray-100 flex items-center gap-2">
             <PlayCircle size={20} className="text-red-500" />
             <LocalizedText en="Watch & Cook" zh="睇片學整" />
           </h2>
@@ -191,7 +191,7 @@ export function RecipeDetail({ meal }: Props) {
 
       {/* Source link — always shown when present, alongside the video */}
       {meal.sourceUrl && (
-        <p className="text-xs text-gray-400">
+        <p className="text-xs text-gray-400 dark:text-gray-500">
           <LocalizedText en="Original recipe:" zh="原始食譜：" />{' '}
           <a
             href={meal.sourceUrl}

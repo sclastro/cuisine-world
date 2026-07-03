@@ -124,7 +124,7 @@ export function BrowseResults({ meals, total, restIds = [] }: Props) {
           <button
             onClick={loadMore}
             disabled={isLoading}
-            className="px-6 py-2.5 rounded-full border border-green-200 bg-white text-sm font-medium text-green-700 hover:bg-green-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-sm"
+            className="px-6 py-2.5 rounded-full border border-green-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm font-medium text-green-700 dark:text-green-400 hover:bg-green-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-sm"
           >
             {isLoading ? t('filter.loading') : t('filter.loadMore')}
           </button>

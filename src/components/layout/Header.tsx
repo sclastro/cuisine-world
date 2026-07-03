@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { Menu, X, Heart, UtensilsCrossed } from 'lucide-react'
 import { LanguageToggle } from '@/components/ui/LanguageToggle'
+import { ThemeToggle } from '@/components/ui/ThemeToggle'
 import { SearchBar } from '@/components/search/SearchBar'
 import { useFavorites } from '@/context/FavoritesContext'
 import { useLanguage } from '@/context/LanguageContext'
@@ -47,14 +48,14 @@ export function Header() {
 
   return (
     <header className={cn(
-      'sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-green-100 transition-shadow duration-300',
+      'sticky top-0 z-50 bg-white/90 dark:bg-gray-900/90 backdrop-blur border-b border-green-100 dark:border-gray-800 transition-shadow duration-300',
       scrolled ? 'shadow-md' : 'shadow-sm'
     )}>
       <div className="max-w-6xl mx-auto px-4 h-16 flex items-center gap-4">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 shrink-0">
           <UtensilsCrossed size={24} className="text-green-600" />
-          <span className="font-bold text-lg text-green-800 hidden sm:block">
+          <span className="font-bold text-lg text-green-800 dark:text-green-300 hidden sm:block">
             Cuisine World
           </span>
         </Link>
@@ -70,7 +71,7 @@ export function Header() {
             <Link
               key={link.href}
               href={link.href}
-              className="px-3 py-1.5 rounded-lg text-sm text-gray-600 hover:text-green-700 hover:bg-green-50 transition-colors"
+              className="px-3 py-1.5 rounded-lg text-sm text-gray-600 dark:text-gray-300 hover:text-green-700 dark:hover:text-green-400 hover:bg-green-50 dark:hover:bg-gray-800 transition-colors"
             >
               {link.label}
             </Link>
@@ -80,10 +81,10 @@ export function Header() {
         {/* Favorites icon */}
         <Link
           href="/favorites"
-          className="relative hidden md:flex items-center justify-center w-9 h-9 rounded-full hover:bg-green-50 transition-colors"
+          className="relative hidden md:flex items-center justify-center w-9 h-9 rounded-full hover:bg-green-50 dark:hover:bg-gray-800 transition-colors"
           aria-label="Favorites"
         >
-          <Heart size={20} className="text-green-700" />
+          <Heart size={20} className="text-green-700 dark:text-green-400" />
           {mounted && favorites.size > 0 && (
             <span className="absolute -top-0.5 -right-0.5 bg-green-600 text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
               {favorites.size > 9 ? '9+' : favorites.size}
@@ -91,11 +92,12 @@ export function Header() {
           )}
         </Link>
 
+        <ThemeToggle />
         <LanguageToggle />
 
         {/* Mobile menu button */}
         <button
-          className="md:hidden p-2 rounded-lg hover:bg-green-50 transition-colors"
+          className="md:hidden p-2 rounded-lg hover:bg-green-50 dark:hover:bg-gray-800 transition-colors"
           onClick={() => setOpen((v) => !v)}
           aria-label="Toggle menu"
         >
@@ -105,13 +107,13 @@ export function Header() {
 
       {/* Mobile nav drawer */}
       {open && (
-        <nav className="md:hidden border-t border-green-100 bg-white px-4 py-3 flex flex-col gap-1">
+        <nav className="md:hidden border-t border-green-100 dark:border-gray-800 bg-white dark:bg-gray-900 px-4 py-3 flex flex-col gap-1">
           {navLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
               onClick={() => setOpen(false)}
-              className="px-3 py-2 rounded-lg text-sm text-gray-700 hover:bg-green-50 hover:text-green-700 transition-colors"
+              className="px-3 py-2 rounded-lg text-sm text-gray-700 dark:text-gray-300 hover:bg-green-50 dark:hover:bg-gray-800 hover:text-green-700 dark:hover:text-green-400 transition-colors"
             >
               {link.label}
             </Link>
@@ -119,7 +121,7 @@ export function Header() {
           <Link
             href="/favorites"
             onClick={() => setOpen(false)}
-            className="px-3 py-2 rounded-lg text-sm text-gray-700 hover:bg-green-50 hover:text-green-700 transition-colors flex items-center gap-2"
+            className="px-3 py-2 rounded-lg text-sm text-gray-700 dark:text-gray-300 hover:bg-green-50 dark:hover:bg-gray-800 hover:text-green-700 dark:hover:text-green-400 transition-colors flex items-center gap-2"
           >
             <Heart size={16} />
             {label('favorites')}

@@ -27,8 +27,8 @@ export function RecipeFilterBar({ difficulties, onToggleDifficulty, sort, onSort
   const hasFilters = difficulties.length > 0 || sort !== 'name-asc'
 
   return (
-    <div className="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-xl border border-green-100 bg-white px-3 py-2.5 shadow-sm">
-      <span className="flex items-center gap-1.5 text-xs font-semibold text-gray-400 uppercase tracking-wide">
+    <div className="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-xl border border-green-100 dark:border-gray-800 bg-white dark:bg-gray-900 px-3 py-2.5 shadow-sm">
+      <span className="flex items-center gap-1.5 text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">
         <SlidersHorizontal size={13} />
         {t('filter.difficulty')}
       </span>
@@ -45,7 +45,7 @@ export function RecipeFilterBar({ difficulties, onToggleDifficulty, sort, onSort
                 'px-2.5 py-1 rounded-full text-xs border transition-colors',
                 active
                   ? 'bg-green-600 text-white border-green-600'
-                  : 'bg-white text-gray-600 border-green-100 hover:border-green-400 hover:bg-green-50'
+                  : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border-green-100 dark:border-gray-700 hover:border-green-400 hover:bg-green-50 dark:hover:bg-gray-700'
               )}
             >
               {t(DIFF_KEY[stars])}
@@ -55,12 +55,12 @@ export function RecipeFilterBar({ difficulties, onToggleDifficulty, sort, onSort
       </div>
 
       {/* Sort */}
-      <label className="flex items-center gap-1.5 ml-auto text-xs text-gray-500">
-        <span className="font-semibold uppercase tracking-wide text-gray-400">{t('filter.sortBy')}</span>
+      <label className="flex items-center gap-1.5 ml-auto text-xs text-gray-500 dark:text-gray-400">
+        <span className="font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500">{t('filter.sortBy')}</span>
         <select
           value={sort}
           onChange={(e) => onSortChange(e.target.value as SortKey)}
-          className="rounded-full border border-green-100 bg-white px-3 py-1 text-xs text-gray-700 focus:border-green-400 focus:outline-none"
+          className="rounded-full border border-green-100 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-1 text-xs text-gray-700 dark:text-gray-200 focus:border-green-400 focus:outline-none"
         >
           {SORTS.map((s) => (
             <option key={s.key} value={s.key}>{t(s.label)}</option>
@@ -75,7 +75,7 @@ export function RecipeFilterBar({ difficulties, onToggleDifficulty, sort, onSort
           'flex items-center gap-1.5 px-3 py-1 rounded-full text-xs border transition-colors',
           sort === 'shuffle'
             ? 'bg-green-600 text-white border-green-600'
-            : 'bg-white text-green-700 border-green-200 hover:bg-green-50 hover:border-green-400'
+            : 'bg-white dark:bg-gray-800 text-green-700 dark:text-green-400 border-green-200 dark:border-gray-700 hover:bg-green-50 dark:hover:bg-gray-700 hover:border-green-400'
         )}
       >
         <Shuffle size={13} />

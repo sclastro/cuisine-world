@@ -14,7 +14,7 @@ export function IngredientList({ ingredients, namesZh }: Props) {
       {ingredients.map((ing, idx) => (
         <li
           key={ing.name}
-          className="flex items-center gap-2 p-2 rounded-xl bg-green-50 border border-green-100"
+          className="flex items-center gap-2 p-2 rounded-xl bg-green-50 dark:bg-gray-800 border border-green-100 dark:border-gray-700"
         >
           <div className="relative w-8 h-8 shrink-0">
             <Image
@@ -27,11 +27,11 @@ export function IngredientList({ ingredients, namesZh }: Props) {
             />
           </div>
           <div className="min-w-0">
-            <p className="text-xs font-medium text-gray-800 truncate">
+            <p className="text-xs font-medium text-gray-800 dark:text-gray-200 truncate">
               <LocalizedText en={ing.name} zh={namesZh?.[idx]} />
             </p>
             {ing.measure && (
-              <p className="text-[11px] text-gray-400 truncate">{ing.measure}</p>
+              <p className="text-[11px] text-gray-400 dark:text-gray-500 truncate">{ing.measure}</p>
             )}
           </div>
         </li>
