@@ -102,8 +102,10 @@ const STRINGS = {
   'fridge.find':        { en: 'Find Recipes',   zh: '搵食譜' },
   'fridge.finding':     { en: 'Finding…',       zh: '搵緊…' },
   'fridge.clear':       { en: 'Clear',          zh: '清除' },
-  'fridge.hint':        { en: 'Add a few ingredients above, then hit Find Recipes.', zh: '喺上面加幾樣食材，再撳「搵食譜」。' },
+  'fridge.hint':        { en: 'Pick a few ingredients above — results appear automatically.', zh: '喺上面揀幾樣食材，結果會自動出現。' },
   'fridge.empty':       { en: 'No recipes matched — try fewer or different ingredients.', zh: '冇食譜脗合 — 試下少啲或者唔同嘅食材。' },
+  'fridge.selected':    { en: 'Selected',       zh: '已揀' },
+  'fridge.results':     { en: 'recipes found',  zh: '道食譜' },
   'fridge.entry':       { en: 'Got ingredients? Cook from your fridge →', zh: '有食材喺手？睇下雪櫃食譜 →' },
 
   // Personalized homepage rows
