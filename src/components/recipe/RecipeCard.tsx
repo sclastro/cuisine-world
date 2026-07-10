@@ -60,7 +60,7 @@ export function RecipeCard({
         </h3>
 
         {blurb && (
-          <p className="text-[11px] text-gray-400 dark:text-gray-500 line-clamp-2 leading-relaxed">
+          <p className="text-[11px] text-gray-400 dark:text-gray-400 line-clamp-2 leading-relaxed">
             <LocalizedText en={blurb} zh={blurbZh} />
           </p>
         )}

@@ -13,7 +13,7 @@ interface Props {
 export function RecipeCardMeta({ minutes, servings }: Props) {
   const t = useT()
   return (
-    <div className="flex items-center gap-2.5 text-[11px] text-gray-400">
+    <div className="flex items-center gap-2.5 text-[11px] text-gray-400 dark:text-gray-400">
       <span className="flex items-center gap-0.5">
         <Clock size={11} />~{minutes} {t('recipe.min')}
       </span>
