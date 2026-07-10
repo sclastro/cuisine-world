@@ -65,7 +65,7 @@ export function ExploreWizard({ initialMeals }: Props) {
     <div className="max-w-5xl mx-auto px-4 py-8 space-y-8">
       {/* Header */}
       <div className="text-center space-y-2">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-50">{t('explore.title')} 🧭</h1>
+        <h1 className="text-3xl font-bold font-display text-gray-900 dark:text-gray-50">{t('explore.title')} 🧭</h1>
         <p className="text-gray-400 dark:text-gray-500 text-sm max-w-xl mx-auto">{t('explore.subtitle')}</p>
       </div>
 

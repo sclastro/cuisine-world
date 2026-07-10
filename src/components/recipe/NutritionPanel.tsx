@@ -25,7 +25,7 @@ export function NutritionPanel({ nutrition }: Props) {
 
   return (
     <section className="space-y-3">
-      <h2 className="text-lg font-bold text-gray-800 dark:text-gray-100 flex items-center gap-2">
+      <h2 className="text-lg font-bold font-display text-gray-800 dark:text-gray-100 flex items-center gap-2">
         <Flame size={18} className="text-orange-500" />
         {t('nutrition.title')}
         {approx && (

@@ -40,7 +40,7 @@ export function EverydayCookingSection() {
     <section className="space-y-5">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">{t('everyday.title')}</h2>
+          <h2 className="text-xl font-bold font-display text-gray-800 dark:text-gray-100">{t('everyday.title')}</h2>
           <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{t('everyday.subtitle')}</p>
         </div>
         <Link

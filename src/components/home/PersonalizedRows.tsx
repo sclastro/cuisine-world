@@ -41,7 +41,7 @@ export function PersonalizedRows() {
             <div className="w-7 h-7 rounded-full bg-green-100 dark:bg-green-900/60 flex items-center justify-center">
               <Clock size={14} className="text-green-600 dark:text-green-400" />
             </div>
-            <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">{t('home.recent')}</h2>
+            <h2 className="text-xl font-bold font-display text-gray-800 dark:text-gray-100">{t('home.recent')}</h2>
           </div>
           <RecipeGrid meals={recentMeals} showSnippet />
         </section>
@@ -54,7 +54,7 @@ export function PersonalizedRows() {
               <Heart size={14} className="text-red-500 fill-red-400" />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">{t('home.recommended')}</h2>
+              <h2 className="text-xl font-bold font-display text-gray-800 dark:text-gray-100">{t('home.recommended')}</h2>
               <p className="text-xs text-gray-400 dark:text-gray-500">{t('home.recommendedSub')}</p>
             </div>
           </div>

@@ -18,10 +18,10 @@ export default async function AreaIndexPage() {
   return (
     <div className="max-w-6xl mx-auto px-4 py-8 space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-800">
+        <h1 className="text-2xl font-bold font-display text-gray-800 dark:text-gray-100">
           <LocalizedText en="Explore by Region" zh="按地區探索" />
         </h1>
-        <p className="text-sm text-gray-500 mt-1">
+        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
           <LocalizedText
             en="Discover home-style recipes from popular cuisines around the world"
             zh="探索世界各地熱門菜系嘅家常食譜"
@@ -36,10 +36,10 @@ export default async function AreaIndexPage() {
             <Link
               key={name}
               href={`/area/${encodeURIComponent(name)}`}
-              className="flex items-center gap-3 p-4 rounded-xl bg-white border border-green-100 hover:border-green-400 hover:bg-green-50 hover:shadow-sm transition-all"
+              className="flex items-center gap-3 p-4 rounded-xl bg-white dark:bg-gray-900 border border-green-100 dark:border-gray-800 hover:border-green-400 hover:bg-green-50 dark:hover:bg-gray-800 hover:shadow-sm transition-all"
             >
               <span className="text-2xl">{info.flag}</span>
-              <span className="text-sm font-medium text-gray-700">
+              <span className="text-sm font-medium text-gray-700 dark:text-gray-200">
                 <LocalizedText en={name} zh={info.nameZh} />
               </span>
             </Link>

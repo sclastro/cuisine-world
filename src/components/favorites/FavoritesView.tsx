@@ -86,7 +86,7 @@ function FavoritesViewInner() {
             <Heart size={18} className="fill-red-400 text-red-400" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-gray-800 dark:text-gray-100">{t('fav.title')}</h1>
+            <h1 className="text-xl font-bold font-display text-gray-800 dark:text-gray-100">{t('fav.title')}</h1>
             <p className="text-sm text-gray-400 dark:text-gray-500">
               {meals.length} {t('fav.saved')}
             </p>

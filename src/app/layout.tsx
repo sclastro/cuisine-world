@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next'
-import { Geist } from 'next/font/google'
+import { Geist, Fraunces } from 'next/font/google'
 import './globals.css'
 import { FavoritesProvider } from '@/context/FavoritesContext'
 import { LanguageProvider } from '@/context/LanguageContext'
@@ -13,6 +13,12 @@ import { Footer } from '@/components/layout/Footer'
 const themeScript = `(function(){try{var t=localStorage.getItem('cuisine-world-theme');if(t==='dark')document.documentElement.classList.add('dark')}catch(e){}})()`
 
 const geist = Geist({ subsets: ['latin'] })
+// Editorial display serif for headings (Latin-only; ZH falls back to system).
+const fraunces = Fraunces({
+  subsets: ['latin'],
+  variable: '--font-display',
+  display: 'swap',
+})
 
 export const metadata: Metadata = {
   title: {
@@ -36,7 +42,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={geist.className} suppressHydrationWarning>
+    <html lang="en" className={`${geist.className} ${fraunces.variable}`} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>

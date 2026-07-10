@@ -44,7 +44,7 @@ export default async function CollectionPage({ params }: Props) {
         <div className="flex items-center gap-3">
           <span className="text-4xl">{def.emoji}</span>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">
+            <h1 className="text-2xl font-bold font-display text-gray-900">
               <LocalizedText en={def.titleEn} zh={def.titleZh} />
             </h1>
             <p className={`text-sm ${accent.text}`}>

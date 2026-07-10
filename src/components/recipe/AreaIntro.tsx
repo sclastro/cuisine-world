@@ -25,7 +25,7 @@ export function AreaIntro({ flag, area, nameZh, introEn, introZh, recipeCount }:
 
   return (
     <div className="space-y-2">
-      <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
+      <h1 className="text-2xl font-bold font-display text-gray-800 dark:text-gray-100">
         {flag} {name}{suffix}
       </h1>
       <p className="text-sm text-gray-600 dark:text-gray-300 max-w-2xl leading-relaxed">

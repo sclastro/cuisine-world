@@ -16,7 +16,7 @@ export default function CollectionsPage() {
   return (
     <div className="max-w-5xl mx-auto px-4 py-8 space-y-8">
       <div className="text-center space-y-2">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-50">
+        <h1 className="text-3xl font-bold font-display text-gray-900 dark:text-gray-50">
           <LocalizedText en="Collections" zh="精選合集" /> ✨
         </h1>
         <p className="text-gray-400 dark:text-gray-500 text-sm max-w-xl mx-auto">

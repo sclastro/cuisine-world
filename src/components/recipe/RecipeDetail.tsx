@@ -56,7 +56,7 @@ export function RecipeDetail({ meal }: Props) {
         </div>
 
         <div className="space-y-3">
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-50">
+          <h1 className="font-display text-h1 text-gray-900 dark:text-gray-50">
             <LocalizedText en={meal.name} zh={meal.nameZh} />
           </h1>
 
@@ -130,7 +130,7 @@ export function RecipeDetail({ meal }: Props) {
 
       {/* Ingredients */}
       <section className="space-y-3">
-        <h2 className="text-lg font-bold text-gray-800 dark:text-gray-100">
+        <h2 className="text-lg font-bold font-display text-gray-800 dark:text-gray-100">
           <LocalizedText en="Ingredients" zh="食材" />
           <span className="ml-2 text-sm font-normal text-gray-400 dark:text-gray-500">({meal.ingredients.length})</span>
         </h2>
@@ -139,7 +139,7 @@ export function RecipeDetail({ meal }: Props) {
 
       {/* Instructions */}
       <section className="space-y-3">
-        <h2 className="text-lg font-bold text-gray-800 dark:text-gray-100">
+        <h2 className="text-lg font-bold font-display text-gray-800 dark:text-gray-100">
           <LocalizedText en="Instructions" zh="烹飪步驟" />
         </h2>
         <ol className="space-y-3">
@@ -159,7 +159,7 @@ export function RecipeDetail({ meal }: Props) {
       {/* Watch on YouTube — embedded player + link (shown whenever a video exists) */}
       {youtubeEmbed && (
         <section className="space-y-2">
-          <h2 className="text-lg font-bold text-gray-800 dark:text-gray-100 flex items-center gap-2">
+          <h2 className="text-lg font-bold font-display text-gray-800 dark:text-gray-100 flex items-center gap-2">
             <PlayCircle size={20} className="text-red-500" />
             <LocalizedText en="Watch & Cook" zh="睇片學整" />
           </h2>

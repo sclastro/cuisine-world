@@ -51,7 +51,7 @@ export default function EverydayPage() {
   return (
     <div className="max-w-4xl mx-auto px-4 py-12 space-y-10">
       <div className="text-center space-y-2">
-        <h1 className="text-3xl font-extrabold text-gray-900 dark:text-gray-50">
+        <h1 className="text-3xl font-extrabold font-display text-gray-900 dark:text-gray-50">
           🍳 <LocalizedText en="Everyday Cooking" zh="家常煮意" />
         </h1>
         <p className="text-gray-400 text-sm">

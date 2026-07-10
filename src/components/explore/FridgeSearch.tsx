@@ -89,7 +89,7 @@ export function FridgeSearch() {
           <Refrigerator size={18} className="text-green-600 dark:text-green-400" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-50">{t('fridge.title')}</h1>
+          <h1 className="text-2xl font-bold font-display text-gray-900 dark:text-gray-50">{t('fridge.title')}</h1>
           <p className="text-sm text-gray-400 dark:text-gray-500">{t('fridge.subtitle')}</p>
         </div>
       </div>

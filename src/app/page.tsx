@@ -98,7 +98,7 @@ export default async function HomePage() {
           <LocalizedText en="🌍 Thousands of recipes · Free forever" zh="🌍 數千份食譜 · 永久免費" />
         </span>
 
-        <h1 className="text-4xl sm:text-5xl font-extrabold text-gray-900 dark:text-gray-50 leading-tight tracking-tight">
+        <h1 className="font-display text-display text-gray-900 dark:text-gray-50">
           <LocalizedText
             en="Explore the World's"
             zh="探索世界各地"
@@ -182,7 +182,7 @@ export default async function HomePage() {
               <div className={`w-7 h-7 rounded-full flex items-center justify-center ${collectionAccent.badge}`}>
                 <Sparkles size={14} />
               </div>
-              <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">
+              <h2 className="text-xl font-bold font-display text-gray-800 dark:text-gray-100">
                 <LocalizedText en="Featured Collection" zh="本日精選合集" />
                 <span className="ml-2 font-normal text-gray-400 text-base">
                   {featuredCollection.emoji}{' '}
@@ -211,7 +211,7 @@ export default async function HomePage() {
             <div className="w-7 h-7 rounded-full bg-green-100 flex items-center justify-center">
               <Shuffle size={14} className="text-green-600" />
             </div>
-            <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">
+            <h2 className="text-xl font-bold font-display text-gray-800 dark:text-gray-100">
               <LocalizedText en="Today's Picks" zh="今日精選" />
             </h2>
           </div>
