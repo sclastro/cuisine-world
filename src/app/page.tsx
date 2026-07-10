@@ -84,6 +84,8 @@ export default async function HomePage() {
   const featuredMeals = await localizeMealsForList(randomMeals)
   const collectionMeals = await localizeMealsForList((collectionResult?.meals ?? []).slice(0, 4))
   const collectionAccent = ACCENT_CLASSES[featuredCollection.accent]
+  // Decorative hero mosaic — reuse category thumbnails (already fetched).
+  const heroThumbs = categories.slice(0, 6).map((c) => c.thumbnail).filter(Boolean)
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-10 space-y-16">
@@ -132,6 +134,21 @@ export default async function HomePage() {
             </Link>
           ))}
         </div>
+
+        {/* Decorative food mosaic — a taste of what's inside */}
+        {heroThumbs.length > 0 && (
+          <div aria-hidden className="flex justify-center -space-x-3 pt-4">
+            {heroThumbs.map((src, i) => (
+              <div
+                key={i}
+                className="relative w-14 h-14 sm:w-16 sm:h-16 rounded-2xl overflow-hidden ring-4 ring-[#faf8f3] dark:ring-gray-950 shadow-sm"
+                style={{ transform: `rotate(${(i % 2 === 0 ? -1 : 1) * 4}deg)` }}
+              >
+                <Image src={src} alt="" fill sizes="64px" className="object-cover" />
+              </div>
+            ))}
+          </div>
+        )}
       </section>
 
       {/* ── Personalized rows (recently viewed + recommendations) ── */}
