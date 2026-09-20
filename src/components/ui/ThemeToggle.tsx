@@ -18,7 +18,7 @@ export function ThemeToggle() {
       onClick={toggleTheme}
       aria-label={label}
       title={label}
-      className="flex items-center justify-center w-9 h-9 rounded-full border border-green-200 dark:border-gray-700 text-gray-500 dark:text-gray-300 hover:text-green-700 dark:hover:text-green-400 hover:bg-green-50 dark:hover:bg-gray-800 transition-colors"
+      className="shrink-0 flex items-center justify-center w-9 h-9 rounded-full border border-green-200 dark:border-gray-700 text-gray-500 dark:text-gray-300 hover:text-green-700 dark:hover:text-green-400 hover:bg-green-50 dark:hover:bg-gray-800 transition-colors"
     >
       {isDark ? <Sun size={17} /> : <Moon size={17} />}
     </button>

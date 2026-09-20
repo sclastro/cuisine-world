@@ -61,7 +61,7 @@ export function Header() {
         </Link>
 
         {/* Search */}
-        <div className="flex-1 max-w-sm">
+        <div className="flex-1 min-w-0 max-w-sm">
           <SearchBar compact />
         </div>
 
@@ -71,7 +71,7 @@ export function Header() {
             <Link
               key={link.href}
               href={link.href}
-              className="px-3 py-1.5 rounded-lg text-sm text-gray-600 dark:text-gray-300 hover:text-green-700 dark:hover:text-green-400 hover:bg-green-50 dark:hover:bg-gray-800 transition-colors"
+              className="px-3 py-1.5 rounded-lg text-sm whitespace-nowrap text-gray-600 dark:text-gray-300 hover:text-green-700 dark:hover:text-green-400 hover:bg-green-50 dark:hover:bg-gray-800 transition-colors"
             >
               {link.label}
             </Link>
