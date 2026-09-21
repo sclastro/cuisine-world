@@ -32,6 +32,9 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+# ...opting in: the example holds no secrets, only placeholders and the
+# public TheMealDB test key, and documents what the app reads.
+!.env.example
 
 # vercel
 .vercel

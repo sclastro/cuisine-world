@@ -1,5 +1,6 @@
 import { unstable_cache } from 'next/cache'
 import Fuse from 'fuse.js'
+import { MEALDB_BASE_URL } from './mealdb'
 
 // A lightweight, cached index of every meal name (id + name only — no full
 // recipe data) used for both live search suggestions and typo-tolerant
@@ -11,7 +12,6 @@ export interface IndexEntry {
   thumbnail: string
 }
 
-const BASE_URL = 'https://www.themealdb.com/api/json/v1/1'
 
 interface RawIndexMeal {
   idMeal: string
@@ -26,7 +26,7 @@ async function fetchIndex(): Promise<IndexEntry[]> {
   const results = await Promise.all(
     letters.map(async (letter) => {
       try {
-        const res = await fetch(`${BASE_URL}/search.php?f=${letter}`, {
+        const res = await fetch(`${MEALDB_BASE_URL}/search.php?f=${letter}`, {
           next: { revalidate: 3600 },
           signal: AbortSignal.timeout(6000),
         })

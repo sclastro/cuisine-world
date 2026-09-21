@@ -5,13 +5,13 @@ import { SPOONACULAR_ONLY_AREAS, spoonacularCuisineFor } from './areas'
 import { fuzzySearchIndex } from './searchIndex'
 import { cleanMeals, isCompleteMeal } from './mealQuality'
 import { getCollection } from './collections'
+import { MEALDB_BASE_URL } from './mealdb'
 import type { PresetMenuDef } from './presetMenus'
 
-const BASE_URL = 'https://www.themealdb.com/api/json/v1/1'
 
 async function apiFetch<T>(path: string, revalidate = 3600): Promise<T | null> {
   try {
-    const res = await fetch(`${BASE_URL}${path}`, {
+    const res = await fetch(`${MEALDB_BASE_URL}${path}`, {
       next: { revalidate },
     })
     if (!res.ok) return null
