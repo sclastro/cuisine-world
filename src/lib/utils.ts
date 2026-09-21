@@ -22,17 +22,136 @@ export function extractIngredients(meal: RawMeal): Ingredient[] {
   return ingredients
 }
 
-// Some TheMealDB entries put step headers like "STEP 1" on their own line
-// before the actual instruction text. We already number steps ourselves when
-// rendering, so a lone header line becomes a bogus empty step — filter it out.
+// TheMealDB instruction text is inconsistent: some entries are a single
+// unbroken blob, others use newlines but pack three or four distinct actions
+// into one paragraph, and a few number their own steps ("2. Brown the meat").
+// Rendering those verbatim gives cooks steps they can't follow at the stove.
+//
+// parseInstructions normalises all of that into one action per step: it splits
+// on newlines first, then on sentence boundaries within each paragraph, and
+// finally stitches back fragments too small to stand alone.
+
+// A line that is nothing but a step header — we number steps ourselves.
 const STEP_HEADER_RE = /^step\s*\d+\s*[:.]?$/i
+
+// Leading enumeration the source added itself ("2.", "3)", "Step 4:").
+// The separator may be missing after the dot ("1.Boil the eggs"), so a letter
+// is accepted in place of the space — but a digit is not, or the quantity in
+// "1.5 litres of water" would lose its leading number.
+const LEADING_NUM_RE = /^\s*(?:step\s*)?\d+\s*[.):](?:\s+|(?=[A-Za-z]))/i
+
+// Words whose trailing dot is an abbreviation, not the end of a sentence.
+// Without this, "add 2 tbsp. Olive oil" would split mid-instruction.
+//
+// Time units (min/hr/sec) are deliberately absent: in this corpus they almost
+// always close a sentence ("bake for 10 mins. Remove from the oven"), so
+// treating them as abbreviations would keep those instructions fused instead.
+const ABBREVIATIONS = new Set([
+  'approx', 'approximately', 'tbsp', 'tbs', 'tsp', 'oz', 'lb', 'lbs', 'pt',
+  'qt', 'gal', 'ml', 'cl', 'dl', 'cm', 'mm', 'kg', 'gr', 'gm', 'temp', 'deg',
+  'pkg', 'pkt', 'no', 'vs', 'etc', 'ie', 'eg', 'mr', 'mrs', 'ms', 'dr', 'ca',
+])
+
+// Below this, a fragment is treated as a tail of the previous step rather than
+// an instruction in its own right. Deliberately low: it should catch a bare
+// sign-off ("Serve.", "Enjoy!") without swallowing genuinely short but real
+// instructions like "Heat the oil." or "Drain the pasta."
+const MIN_STEP_CHARS = 10
+
+// Some entries are hard-wrapped at a fixed column, so a newline can land in the
+// middle of a sentence ("...spread the oil all over and\nkeep it for roasting").
+// A break is treated as wrapping — not a new step — only when the previous line
+// looks like it ran into a margin: no terminating punctuation, already long, and
+// the next line continues in lower case. Entries whose steps merely start in
+// lower case (each one short and self-contained) are left alone.
+const WRAP_MIN_CHARS = 60
+
+function unwrapHardBreaks(lines: string[]): string[] {
+  const out: string[] = []
+  for (const line of lines) {
+    const prev = out[out.length - 1]
+    const isContinuation =
+      prev !== undefined &&
+      prev.length >= WRAP_MIN_CHARS &&
+      !/[.!?:;]$/.test(prev) &&
+      /^[a-z]/.test(line)
+    if (isContinuation) {
+      out[out.length - 1] = `${prev} ${line}`
+    } else {
+      out.push(line)
+    }
+  }
+  return out
+}
+
+function splitIntoSentences(text: string): string[] {
+  const out: string[] = []
+  let start = 0
+  // Candidate boundary: terminator, optional closing quote/bracket, whitespace.
+  const boundary = /([.!?]+)(["')\]]?)\s+/g
+  let m: RegExpExecArray | null
+  while ((m = boundary.exec(text)) !== null) {
+    const before = text.slice(start, m.index)
+    const after = text.slice(boundary.lastIndex)
+    if (!after) break
+
+    // Only a single dot can be an abbreviation ("etc." but not "wait...").
+    if (m[1] === '.') {
+      const lastWord = before.match(/([A-Za-z]+)$/)?.[1]?.toLowerCase()
+      if (lastWord && ABBREVIATIONS.has(lastWord)) continue
+      // A single capital letter before the dot is an initial or a unit
+      // ("180 C. " / "gas mark F. ") — keep it attached.
+      if (/(?:^|\s)[A-Za-z]$/.test(before)) continue
+    }
+
+    // A new sentence starts with a capital, or with its own step number.
+    const startsNew = /^[A-Z]/.test(after) || /^\d+\s*[.)]\s/.test(after)
+    if (!startsNew) continue
+
+    out.push(text.slice(start, boundary.lastIndex).trim())
+    start = boundary.lastIndex
+  }
+  const tail = text.slice(start).trim()
+  if (tail) out.push(tail)
+  return out
+}
 
 export function parseInstructions(raw: string | null): string[] {
   if (!raw) return []
-  return raw
-    .split(/\r\n|\n/)
-    .map((line) => line.trim())
-    .filter((line) => line.length > 0 && !STEP_HEADER_RE.test(line))
+
+  const paragraphs = unwrapHardBreaks(
+    raw
+      .split(/\r\n|\n/)
+      .map((line) => line.trim())
+      .filter((line) => line.length > 0 && !STEP_HEADER_RE.test(line))
+  )
+
+  const steps: string[] = []
+  for (const paragraph of paragraphs) {
+    // Strip the source's own numbering before splitting, or the bare "2."
+    // separates into a fragment of its own.
+    const body = paragraph.replace(LEADING_NUM_RE, '')
+    for (const sentence of splitIntoSentences(body)) {
+      const step = sentence
+        .replace(LEADING_NUM_RE, '')
+        // A leading "*" marks an aside ("*Meanwhile, steam the vegetables");
+        // the marker means nothing once each action is its own step.
+        .replace(/^\*+\s*/, '')
+        .trim()
+      // Dropped entirely: leftover enumeration ("4.") carries no instruction,
+      // so it must not be glued onto the end of the previous step either.
+      if (!step || /^\d+\s*[.)]?$/.test(step)) continue
+
+      // Too short to be an instruction on its own — append to the previous
+      // step rather than leaving a stray "Serve." sitting on its own line.
+      if (steps.length > 0 && step.length < MIN_STEP_CHARS) {
+        steps[steps.length - 1] = `${steps[steps.length - 1]} ${step}`
+        continue
+      }
+      steps.push(step)
+    }
+  }
+  return steps
 }
 
 const COMPLEX_TECHNIQUES = [
